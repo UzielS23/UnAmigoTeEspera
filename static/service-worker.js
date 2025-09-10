@@ -3,8 +3,11 @@ const urlsToCache = [
     '/',
     '/static/img/logo.png',
     '/static/img/descarga%20(17).jpg',
-     '/manifest.json'
-    
+    '/manifest.json',
+    '/static/img/chaparro.jpg',
+    '/static/img/Emma.jpg',
+    '/static/img/max.jpg',
+    '/static/img/mimi.jpg'
 ];
 
 // Instalación del SW

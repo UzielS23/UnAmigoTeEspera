@@ -810,8 +810,246 @@
     margin-left: 0.5rem;
     color: #555;
 }
+.pets-section {
+    padding: 3rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    text-align: center;
+}
 
-    </style>
+.pets-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.section-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    color: white;
+    padding: 0.3rem 1rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 1.5rem;
+}
+
+.pets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.pet-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 1rem;
+    border-radius: 15px;
+    text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.pet-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.pet-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.pet-card:hover::before {
+    opacity: 1;
+}
+
+.pet-image {
+    width: 100%;
+    padding-top: 100%; /* Relación de aspecto 1:1 para evitar cortes */
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    background: #f1f5f9; /* Fondo claro para espacios vacíos */
+}
+
+.pet-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Mostrar imagen completa sin cortes */
+    transition: transform 0.3s ease;
+}
+
+.pet-card:hover .pet-img {
+    transform: scale(1.05);
+}
+
+.pet-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.pet-info {
+    color: #64748b;
+    margin-bottom: 0.3rem;
+    font-size: 0.8rem;
+}
+
+.pet-label {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.btn-small {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    color: white;
+    border-radius: 10px;
+    text-align: center;
+    display: inline-block;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-small:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Ajustes responsivos */
+@media (max-width: 1024px) {
+    .pets-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.8rem;
+    }
+
+    .pet-card {
+        padding: 0.8rem;
+    }
+
+    .pet-title {
+        font-size: 1.1rem;
+    }
+
+    .pet-image {
+        padding-top: 100%;
+    }
+
+    .pet-info {
+        font-size: 0.75rem;
+    }
+
+    .btn-small {
+        padding: 0.35rem 0.9rem;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .pets-section {
+        padding: 2rem 0.8rem;
+    }
+
+    .pets-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.6rem;
+    }
+
+    .pet-card {
+        padding: 0.6rem;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.85rem;
+    }
+
+    .pet-title {
+        font-size: 1rem;
+    }
+
+    .pet-image {
+        padding-top: 100%;
+    }
+
+    .pet-info {
+        font-size: 0.7rem;
+    }
+
+    .btn-small {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .pets-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .pet-card {
+        padding: 0.5rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.8rem;
+    }
+
+    .pet-title {
+        font-size: 0.9rem;
+    }
+
+    .pet-image {
+        padding-top: 100%;
+    }
+
+    .pet-info {
+        font-size: 0.65rem;
+    }
+
+    .btn-small {
+        padding: 0.25rem 0.7rem;
+        font-size: 0.65rem;
+    }
+}
+</style>
+
 </head>
 <body>
     <!-- Patrón de fondo -->
@@ -843,11 +1081,10 @@
                 <a href="#apoyos" class="nav-link">Apoyos</a>
                 <a href="#nosotros" class="nav-link">Nosotros</a>
                 <a href="#contacto" class="nav-link">Contacto</a>
-                  <a href="login.html" class="btn btn-outline">Iniciar Sesión</a>
+                <a href="#mascotas" class="nav-link">Adopta</a>
+                  <a href="login.html" class="btn btn-outline">Ingresar</a>
                 <a href="registro.html" class="btn btn-primary">Registrarse</a>
             </div>
-
-            
 
             <div class="mobile-menu-toggle">
                 <span></span>
@@ -1033,10 +1270,94 @@
 
             <!-- Agrega más tarjetas según lo necesites -->
         </div>
+        
     </div>
 </section>
 
+<section class="pets-section" id="mascotas">
+    <div class="pets-container">
+        <div class="section-badge">🐾 Nuestras Mascotas</div>
+        <h2 class="section-title">Conoce a tus futuros mejores amigos</h2>
+        <p class="section-subtitle">
+            Cada mascota tiene una historia única y está esperando un hogar lleno de amor.
+        </p>
+        <div class="pets-grid">
+            <!-- Tarjeta de Chaparro -->
+            <div class="pet-card">
+                <div class="pet-image">
+                    <img src="../static/img/chaparro.jpg" alt="Chaparro" class="pet-img">
+                </div>
+                <h3 class="pet-title">Chaparro</h3>
+                <p class="pet-info"><span class="pet-label">Animal:</span> Perro</p>
+                <p class="pet-info"><span class="pet-label">Sexo:</span> Macho</p>
+                <p class="pet-info"><span class="pet-label">Raza:</span> Mestizo</p>
+                <p class="pet-info"><span class="pet-label">Peso:</span> 10 kg</p>
+                <p class="pet-info"><span class="pet-label">Edad:</span> 3</p>
+                <p class="pet-info"><span class="pet-label">Condiciones:</span> Problema estomacal, necesita 2 operaciones</p>
+                <p class="pet-info"><span class="pet-label">Estado:</span> En tratamiento</p>
+                <a href="#adoptar" class="btn btn-primary btn-small">Adoptar</a>
+            </div>
+            <!-- Tarjeta de Luna -->
+            <div class="pet-card">
+                <div class="pet-image">
+                    <img src="../static/img/Emma.jpg" alt="Luna" class="pet-img">
+                </div>
+                <h3 class="pet-title">Luna</h3>
+                <p class="pet-info"><span class="pet-label">Animal:</span> Perro</p>
+                <p class="pet-info"><span class="pet-label">Sexo:</span> Hembra</p>
+                <p class="pet-info"><span class="pet-label">Raza:</span> Labrador</p>
+                <p class="pet-info"><span class="pet-label">Peso:</span> 25 kg</p>
+                <p class="pet-info"><span class="pet-label">Edad:</span> 2</p>
+                <p class="pet-info"><span class="pet-label">Condiciones:</span> Saludable</p>
+                <p class="pet-info"><span class="pet-label">Estado:</span> Disponible</p>
+                <a href="#adoptar" class="btn btn-primary btn-small">Adoptar</a>
+            </div>
+            <!-- Tarjeta de Max -->
+            <div class="pet-card">
+                <div class="pet-image">
+                    <img src="../static/img/max.jpg" alt="Max" class="pet-img">
+                </div>
+                <h3 class="pet-title">Max</h3>
+                <p class="pet-info"><span class="pet-label">Animal:</span> Perro</p>
+                <p class="pet-info"><span class="pet-label">Sexo:</span> Macho</p>
+                <p class="pet-info"><span class="pet-label">Raza:</span> Pastor Alemán</p>
+                <p class="pet-info"><span class="pet-label">Peso:</span> 30 kg</p>
+                <p class="pet-info"><span class="pet-label">Edad:</span> 5</p>
+                <p class="pet-info"><span class="pet-label">Condiciones:</span> Cojea de la pata trasera izquierda</p>
+                <p class="pet-info"><span class="pet-label">Estado:</span> Disponible</p>
+                <a href="#adoptar" class="btn btn-primary btn-small">Adoptar</a>
+            </div>
+            <!-- Tarjeta de Mimi -->
+            <div class="pet-card">
+                <div class="pet-image">
+                    <img src="../static/img/mimi.jpg" alt="Mimi" class="pet-img">
+                </div>
+                <h3 class="pet-title">Mimi</h3>
+                <p class="pet-info"><span class="pet-label">Animal:</span> Gato</p>
+                <p class="pet-info"><span class="pet-label">Sexo:</span> Hembra</p>
+                <p class="pet-info"><span class="pet-label">Raza:</span> Siamés</p>
+                <p class="pet-info"><span class="pet-label">Peso:</span> 4 kg</p>
+                <p class="pet-info"><span class="pet-label">Edad:</span> 1</p>
+                <p class="pet-info"><span class="pet-label">Condiciones:</span> Saludable</p>
+                <p class="pet-info"><span class="pet-label">Estado:</span> Disponible</p>
+                <a href="#adoptar" class="btn btn-primary btn-small">Adoptar</a>
+            </div>
+        </div>
+    </div>
+</section>
 
+<script>
+// Aplicar animaciones a las tarjetas de mascotas
+document.addEventListener('DOMContentLoaded', () => {
+    const tarjetas = document.querySelectorAll('.pet-card');
+    tarjetas.forEach(elemento => {
+        elemento.style.opacity = '0';
+        elemento.style.transform = 'translateY(20px)';
+        elemento.style.transition = 'all 0.5s ease';
+        observer.observe(elemento);
+    });
+});
+</script>
 
     <!-- Footer -->
     <footer class="footer" id="contacto">
@@ -1051,15 +1372,16 @@
                 entre mascotas y familias. Cada historia de adopción es una nueva oportunidad de amor.
             </p>
 
-            <div class="footer-links">
-                <a href="#inicio" class="footer-link">Inicio</a>
-                <a href="#adoptar" class="footer-link">Adoptar</a>
-                <a href="#nosotros" class="footer-link">Nosotros</a>
-                <a href="login.html" class="footer-link">Iniciar Sesión</a>
-                <a href="registro.html" class="footer-link">Registro</a>
-                <a href="#" class="footer-link">Políticas</a>
-                <a href="#" class="footer-link">Términos</a>
-            </div>
+<div class="footer-links">
+    <a href="#inicio" class="footer-link">Inicio</a>
+    <a href="#adoptar" class="footer-link">Adoptar</a>
+    <a href="#nosotros" class="footer-link">Nosotros</a>
+    <a href="login.html" class="footer-link">Iniciar Sesión</a>
+    <a href="registro.html" class="footer-link">Registro</a>
+    <a href="#mascotas" class="footer-link">Mascotas</a>
+    <a href="#" class="footer-link">Políticas</a>
+    <a href="#" class="footer-link">Términos</a>
+</div>
 
             <div class="footer-bottom">
                 <p>&copy; 2024 UnAmigoTeEspera.com - Todos los derechos reservados. Hecho con 💕 para conectar corazones con patitas.</p>
