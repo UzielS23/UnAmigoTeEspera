@@ -1,0 +1,21 @@
+{
+  "name": "Un Amigo Te Espera a ti",
+  "short_name": "UnAmigo",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#82B78C",
+  "description": "Adopta amor, salva una vida y encuentra compañía incondicional",
+  "icons": [
+    {
+      "src": "/static/img/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/img/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UnAmigoTeEspera.com - Adopta, Ama, Transforma Vidas</title>
-    <link rel="icon" href="./static/img/logo.png">
+    <link rel="icon" href="../static/img/logo.png">
+    <link rel="manifest" href="/manifest.json">
+
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
@@ -735,31 +738,116 @@
                 display: flex;
             }
         }
+        /* Menú oculto en móviles */
+@media (max-width: 1024px) {
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 1rem;
+        background: white;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+
+    .nav-menu.active {
+        display: flex;
+    }
+
+    .nav-buttons {
+        display: none; /* Oculto los botones grandes en móviles */
+    }
+}
+.apoyos-section {
+    padding: 4rem 2rem;
+    background: #fef9f5;
+    text-align: center;
+}
+
+.apoyos-container .section-badge {
+    font-size: 1.2rem;
+}
+
+.apoyos-container .section-title {
+    font-size: 2.5rem;
+    margin: 1rem 0;
+}
+
+.apoyos-container .section-subtitle {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+.apoyos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.apoyo-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    text-align: left;
+}
+
+.apoyo-info {
+    margin-bottom: 0.5rem;
+}
+
+.apoyo-label {
+    font-weight: bold;
+    color: #333;
+}
+
+.apoyo-value {
+    margin-left: 0.5rem;
+    color: #555;
+}
+
     </style>
 </head>
 <body>
     <!-- Patrón de fondo -->
+<script>
+    const toggle = document.querySelector('.mobile-menu-toggle');
+    const menu = document.querySelector('.nav-menu');
+
+    if (toggle) {
+        toggle.addEventListener('click', () => {
+            menu.classList.toggle('active');
+            toggle.classList.toggle('open');
+        });
+    }
+</script>
+
     <div class="background-pattern"></div>
 
     <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-container">
             <a href="#" class="nav-logo">
-                <img src="./static/img/logo.png" alt="UnAmigoTeEspera" class="nav-logo-img">
+                <img src="../static/img/logo.png" alt="UnAmigoTeEspera" class="nav-logo-img">
                 <span class="nav-logo-text">UnAmigoTeEspera</span>
             </a>
             
             <div class="nav-menu">
                 <a href="#inicio" class="nav-link">Inicio</a>
                 <a href="#adoptar" class="nav-link">Adoptar</a>
+                <a href="#apoyos" class="nav-link">Apoyos</a>
                 <a href="#nosotros" class="nav-link">Nosotros</a>
                 <a href="#contacto" class="nav-link">Contacto</a>
-            </div>
-
-            <div class="nav-buttons">
-                <a href="login.html" class="btn btn-outline">Iniciar Sesión</a>
+                  <a href="login.html" class="btn btn-outline">Iniciar Sesión</a>
                 <a href="registro.html" class="btn btn-primary">Registrarse</a>
             </div>
+
+            
 
             <div class="mobile-menu-toggle">
                 <span></span>
@@ -816,7 +904,7 @@
             </div>
 
             <div class="hero-image">
-                <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Mascota esperando adopción" class="hero-main-image">
+                <img src="../static/img/descarga (17).jpg" alt="Mascota esperando adopción" class="hero-main-image">
                 
                 <div class="floating-cards">
                     <div class="floating-card floating-card-1">
@@ -831,6 +919,8 @@
             </div>
         </div>
     </section>
+
+    
 
     <!-- Features Section -->
     <section class="features-section" id="nosotros">
@@ -892,11 +982,67 @@
         </div>
     </section>
 
+    <section class="apoyos-section" id="apoyos">
+    <div class="apoyos-container">
+        <div class="section-badge">💖 Apoyos Recibidos</div>
+        <h2 class="section-title">Nuestros padrinos hacen posible cada adopción</h2>
+        <p class="section-subtitle">
+            Gracias a nuestros padrinos, podemos brindar cuidados y un hogar seguro a cada patita. 
+            Conoce cómo ayudan a transformar vidas.
+        </p>
+
+        <div class="apoyos-grid">
+            <!-- Apoyo item ejemplo -->
+            <div class="apoyo-card">
+                <div class="apoyo-info">
+                    <span class="apoyo-label">Mascota:</span>
+                    <span class="apoyo-value">Fido 🐶</span>
+                </div>
+                <div class="apoyo-info">
+                    <span class="apoyo-label">Padrino:</span>
+                    <span class="apoyo-value">Juan Pérez</span>
+                </div>
+                <div class="apoyo-info">
+                    <span class="apoyo-label">Monto:</span>
+                    <span class="apoyo-value">$500</span>
+                </div>
+                <div class="apoyo-info">
+                    <span class="apoyo-label">Causa:</span>
+                    <span class="apoyo-value">Vacunación y alimentación</span>
+                </div>
+            </div>
+
+            <div class="apoyo-card">
+                <div class="apoyo-info">
+                    <span class="apoyo-label">Mascota:</span>
+                    <span class="apoyo-value">Mimi 🐱</span>
+                </div>
+                <div class="apoyo-info">
+                    <span class="apoyo-label">Padrino:</span>
+                    <span class="apoyo-value">Ana López</span>
+                </div>
+                <div class="apoyo-info">
+                    <span class="apoyo-label">Monto:</span>
+                    <span class="apoyo-value">$300</span>
+                </div>
+                <div class="apoyo-info">
+                    <span class="apoyo-label">Causa:</span>
+                    <span class="apoyo-value">Atención veterinaria</span>
+                </div>
+            </div>
+
+            <!-- Agrega más tarjetas según lo necesites -->
+        </div>
+    </div>
+</section>
+
+
+
     <!-- Footer -->
     <footer class="footer" id="contacto">
         <div class="footer-container">
             <div class="footer-logo">
-                <img src="./static/img/logo.png" alt="UnAmigoTeEspera" class="footer-logo-img">
+                <img src="../static/img/logo.png" alt="UnAmigoTeEspera" class="footer-logo-img">
                 <span class="footer-logo-text">UnAmigoTeEspera.com</span>
             </div>
             
@@ -1097,8 +1243,8 @@
 
         // Preload critical images
         const criticalImages = [
-            './static/img/logo.png',
-            'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80'
+            '../static/img/logo.png',
+            '../static/img/descarga (17).jpg'
         ];
 
         criticalImages.forEach(src => {
@@ -1109,3 +1255,13 @@
             document.head.appendChild(link);
         });
     </script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('Service Worker registrado', reg))
+            .catch(err => console.log('Error al registrar SW', err));
+    });
+}
+</script>
