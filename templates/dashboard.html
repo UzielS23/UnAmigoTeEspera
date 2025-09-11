@@ -7,7 +7,6 @@
     <link rel="icon" href="../static/img/logo.png">
     <link rel="manifest" href="/manifest.json">
 
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
@@ -738,333 +737,494 @@
                 display: flex;
             }
         }
+
         /* Menú oculto en móviles */
-@media (max-width: 1024px) {
-    .nav-menu {
-        display: none;
-        position: absolute;
-        top: 100%;
-        right: 1rem;
-        background: white;
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem 2rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        z-index: 1000;
-    }
+        @media (max-width: 1024px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                right: 1rem;
+                background: white;
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem 2rem;
+                border-radius: 10px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                z-index: 1000;
+            }
 
-    .nav-menu.active {
-        display: flex;
-    }
+            .nav-menu.active {
+                display: flex;
+            }
 
-    .nav-buttons {
-        display: none; /* Oculto los botones grandes en móviles */
-    }
-}
-.apoyos-section {
-    padding: 4rem 2rem;
-    background: #fef9f5;
-    text-align: center;
-}
+            .nav-buttons {
+                display: none; /* Oculto los botones grandes en móviles */
+            }
+        }
 
-.apoyos-container .section-badge {
-    font-size: 1.2rem;
-}
+        .apoyos-section {
+            padding: 4rem 2rem;
+            background: #fef9f5;
+            text-align: center;
+        }
 
-.apoyos-container .section-title {
-    font-size: 2.5rem;
-    margin: 1rem 0;
-}
+        .apoyos-container .section-badge {
+            font-size: 1.2rem;
+        }
 
-.apoyos-container .section-subtitle {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 2rem;
-}
+        .apoyos-container .section-title {
+            font-size: 2.5rem;
+            margin: 1rem 0;
+        }
 
-.apoyos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-}
+        .apoyos-container .section-subtitle {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 2rem;
+        }
 
-.apoyo-card {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    text-align: left;
-}
+        .apoyos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
 
-.apoyo-info {
-    margin-bottom: 0.5rem;
-}
+        .apoyo-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: left;
+        }
 
-.apoyo-label {
-    font-weight: bold;
-    color: #333;
-}
+        .apoyo-info {
+            margin-bottom: 0.5rem;
+        }
 
-.apoyo-value {
-    margin-left: 0.5rem;
-    color: #555;
-}
-.pets-section {
-    padding: 3rem 1rem;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    text-align: center;
-}
+        .apoyo-label {
+            font-weight: bold;
+            color: #333;
+        }
 
-.pets-container {
-    max-width: 1000px;
-    margin: 0 auto;
-}
+        .apoyo-value {
+            margin-left: 0.5rem;
+            color: #555;
+        }
 
-.section-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #3b82f6, #10b981);
-    color: white;
-    padding: 0.3rem 1rem;
-    border-radius: 15px;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-}
+        .pets-section {
+            padding: 3rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
 
-.section-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 0.5rem;
-}
+        .pets-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
 
-.section-subtitle {
-    font-size: 0.9rem;
-    color: #64748b;
-    margin-bottom: 1.5rem;
-}
+        .section-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
 
-.pets-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
 
-.pet-card {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    padding: 1rem;
-    border-radius: 15px;
-    text-align: left;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
+        .section-subtitle {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 1.5rem;
+        }
 
-.pet-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-}
+        .pets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
 
-.pet-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
+        .pet-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 15px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-.pet-card:hover::before {
-    opacity: 1;
-}
+        .pet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
 
-.pet-image {
-    width: 100%;
-    padding-top: 100%; /* Relación de aspecto 1:1 para evitar cortes */
-    position: relative;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 0.5rem;
-    background: #f1f5f9; /* Fondo claro para espacios vacíos */
-}
+        .pet-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-.pet-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Mostrar imagen completa sin cortes */
-    transition: transform 0.3s ease;
-}
+        .pet-card:hover::before {
+            opacity: 1;
+        }
 
-.pet-card:hover .pet-img {
-    transform: scale(1.05);
-}
+        .pet-image {
+            width: 100%;
+            padding-top: 100%; /* Relación de aspecto 1:1 para evitar cortes */
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+            background: #f1f5f9; /* Fondo claro para espacios vacíos */
+        }
 
-.pet-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 0.5rem;
-}
+        .pet-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Mostrar imagen completa sin cortes */
+            transition: transform 0.3s ease;
+        }
 
-.pet-info {
-    color: #64748b;
-    margin-bottom: 0.3rem;
-    font-size: 0.8rem;
-}
+        .pet-card:hover .pet-img {
+            transform: scale(1.05);
+        }
 
-.pet-label {
-    font-weight: 600;
-    color: #1e293b;
-}
+        .pet-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
 
-.btn-small {
-    padding: 0.4rem 1rem;
-    font-size: 0.8rem;
-    background: linear-gradient(135deg, #3b82f6, #10b981);
-    color: white;
-    border-radius: 10px;
-    text-align: center;
-    display: inline-block;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+        .pet-info {
+            color: #64748b;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+        }
 
-.btn-small:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
+        .pet-label {
+            font-weight: 600;
+            color: #1e293b;
+        }
 
-/* Ajustes responsivos */
-@media (max-width: 1024px) {
-    .pets-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 0.8rem;
-    }
+        .btn-small {
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            color: white;
+            border-radius: 10px;
+            text-align: center;
+            display: inline-block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-    .pet-card {
-        padding: 0.8rem;
-    }
+        .btn-small:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
 
-    .pet-title {
-        font-size: 1.1rem;
-    }
+        /* Ajustes responsivos para pets-section */
+        @media (max-width: 1024px) {
+            .pets-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 0.8rem;
+            }
 
-    .pet-image {
-        padding-top: 100%;
-    }
+            .pet-card {
+                padding: 0.8rem;
+            }
 
-    .pet-info {
-        font-size: 0.75rem;
-    }
+            .pet-title {
+                font-size: 1.1rem;
+            }
 
-    .btn-small {
-        padding: 0.35rem 0.9rem;
-        font-size: 0.75rem;
-    }
-}
+            .pet-image {
+                padding-top: 100%;
+            }
 
-@media (max-width: 768px) {
-    .pets-section {
-        padding: 2rem 0.8rem;
-    }
+            .pet-info {
+                font-size: 0.75rem;
+            }
 
-    .pets-grid {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 0.6rem;
-    }
+            .btn-small {
+                padding: 0.35rem 0.9rem;
+                font-size: 0.75rem;
+            }
+        }
 
-    .pet-card {
-        padding: 0.6rem;
-    }
+        @media (max-width: 768px) {
+            .pets-section {
+                padding: 2rem 0.8rem;
+            }
 
-    .section-title {
-        font-size: 1.6rem;
-    }
+            .pets-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 0.6rem;
+            }
 
-    .section-subtitle {
-        font-size: 0.85rem;
-    }
+            .pet-card {
+                padding: 0.6rem;
+            }
 
-    .pet-title {
-        font-size: 1rem;
-    }
+            .section-title {
+                font-size: 1.6rem;
+            }
 
-    .pet-image {
-        padding-top: 100%;
-    }
+            .section-subtitle {
+                font-size: 0.85rem;
+            }
 
-    .pet-info {
-        font-size: 0.7rem;
-    }
+            .pet-title {
+                font-size: 1rem;
+            }
 
-    .btn-small {
-        padding: 0.3rem 0.8rem;
-        font-size: 0.7rem;
-    }
-}
+            .pet-image {
+                padding-top: 100%;
+            }
 
-@media (max-width: 480px) {
-    .pets-grid {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-    }
+            .pet-info {
+                font-size: 0.7rem;
+            }
 
-    .pet-card {
-        padding: 0.5rem;
-    }
+            .btn-small {
+                padding: 0.3rem 0.8rem;
+                font-size: 0.7rem;
+            }
+        }
 
-    .section-title {
-        font-size: 1.4rem;
-    }
+        @media (max-width: 480px) {
+            .pets-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
 
-    .section-subtitle {
-        font-size: 0.8rem;
-    }
+            .pet-card {
+                padding: 0.5rem;
+            }
 
-    .pet-title {
-        font-size: 0.9rem;
-    }
+            .section-title {
+                font-size: 1.4rem;
+            }
 
-    .pet-image {
-        padding-top: 100%;
-    }
+            .section-subtitle {
+                font-size: 0.8rem;
+            }
 
-    .pet-info {
-        font-size: 0.65rem;
-    }
+            .pet-title {
+                font-size: 0.9rem;
+            }
 
-    .btn-small {
-        padding: 0.25rem 0.7rem;
-        font-size: 0.65rem;
-    }
-}
-</style>
+            .pet-image {
+                padding-top: 100%;
+            }
 
+            .pet-info {
+                font-size: 0.65rem;
+            }
+
+            .btn-small {
+                padding: 0.25rem 0.7rem;
+                font-size: 0.65rem;
+            }
+        }
+
+        /* Sección de Padrinos */
+        .padrinos-section {
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .padrinos-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .padrinos-description {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .padrinos-description-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #1e40af, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .padrinos-description-text {
+            font-size: 1rem;
+            color: #64748b;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .padrinos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .padrino-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .padrino-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .padrino-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .padrino-card:hover::before {
+            opacity: 1;
+        }
+
+        .padrino-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.8rem;
+        }
+
+        .padrino-info {
+            color: #64748b;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .padrino-label {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Ajustes Responsivos para Padrinos */
+        @media (max-width: 1024px) {
+            .padrinos-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+
+            .padrinos-description-title {
+                font-size: 1.6rem;
+            }
+
+            .padrinos-description-text {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .padrinos-section {
+                padding: 3rem 1rem;
+            }
+
+            .padrinos-description {
+                padding: 1.5rem;
+            }
+
+            .padrinos-description-title {
+                font-size: 1.4rem;
+            }
+
+            .padrinos-description-text {
+                font-size: 0.9rem;
+            }
+
+            .padrino-card {
+                padding: 1rem;
+            }
+
+            .padrino-title {
+                font-size: 1.2rem;
+            }
+
+            .padrino-info {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .padrinos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .padrinos-description-title {
+                font-size: 1.3rem;
+            }
+
+            .padrinos-description-text {
+                font-size: 0.85rem;
+            }
+
+            .padrino-card {
+                padding: 0.8rem;
+            }
+
+            .padrino-title {
+                font-size: 1.1rem;
+            }
+
+            .padrino-info {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Patrón de fondo -->
-<script>
-    const toggle = document.querySelector('.mobile-menu-toggle');
-    const menu = document.querySelector('.nav-menu');
-
-    if (toggle) {
-        toggle.addEventListener('click', () => {
-            menu.classList.toggle('active');
-            toggle.classList.toggle('open');
-        });
-    }
-</script>
-
     <div class="background-pattern"></div>
 
     <!-- Navbar -->
@@ -1079,10 +1239,11 @@
                 <a href="#inicio" class="nav-link">Inicio</a>
                 <a href="#adoptar" class="nav-link">Adoptar</a>
                 <a href="#apoyos" class="nav-link">Apoyos</a>
+                <a href="#padrinos" class="nav-link">Padrinos</a>
                 <a href="#nosotros" class="nav-link">Nosotros</a>
                 <a href="#contacto" class="nav-link">Contacto</a>
                 <a href="#mascotas" class="nav-link">Adopta</a>
-                  <a href="login.html" class="btn btn-outline">Ingresar</a>
+                <a href="login.html" class="btn btn-outline">Ingresar</a>
                 <a href="registro.html" class="btn btn-primary">Registrarse</a>
             </div>
 
@@ -1157,8 +1318,6 @@
         </div>
     </section>
 
-    
-
     <!-- Features Section -->
     <section class="features-section" id="nosotros">
         <div class="features-container">
@@ -1219,145 +1378,164 @@
         </div>
     </section>
 
+    <!-- Apoyos Section -->
     <section class="apoyos-section" id="apoyos">
-    <div class="apoyos-container">
-        <div class="section-badge">💖 Apoyos Recibidos</div>
-        <h2 class="section-title">Nuestros padrinos hacen posible cada adopción</h2>
-        <p class="section-subtitle">
-            Gracias a nuestros padrinos, podemos brindar cuidados y un hogar seguro a cada patita. 
-            Conoce cómo ayudan a transformar vidas.
-        </p>
+        <div class="apoyos-container">
+            <div class="section-badge">💖 Apoyos Recibidos</div>
+            <h2 class="section-title">Nuestros padrinos hacen posible cada adopción</h2>
+            <p class="section-subtitle">
+                Gracias a nuestros padrinos, podemos brindar cuidados y un hogar seguro a cada patita. 
+                Conoce cómo ayudan a transformar vidas.
+            </p>
 
-        <div class="apoyos-grid">
-            <!-- Apoyo item ejemplo -->
-            <div class="apoyo-card">
-                <div class="apoyo-info">
-                    <span class="apoyo-label">Mascota:</span>
-                    <span class="apoyo-value">Fido 🐶</span>
+            <div class="apoyos-grid">
+                <div class="apoyo-card">
+                    <div class="apoyo-info">
+                        <span class="apoyo-label">Mascota:</span>
+                        <span class="apoyo-value">Fido 🐶</span>
+                    </div>
+                    <div class="apoyo-info">
+                        <span class="apoyo-label">Padrino:</span>
+                        <span class="apoyo-value">Juan Pérez</span>
+                    </div>
+                    <div class="apoyo-info">
+                        <span class="apoyo-label">Monto:</span>
+                        <span class="apoyo-value">$500</span>
+                    </div>
+                    <div class="apoyo-info">
+                        <span class="apoyo-label">Causa:</span>
+                        <span class="apoyo-value">Vacunación y alimentación</span>
+                    </div>
                 </div>
-                <div class="apoyo-info">
-                    <span class="apoyo-label">Padrino:</span>
-                    <span class="apoyo-value">Juan Pérez</span>
-                </div>
-                <div class="apoyo-info">
-                    <span class="apoyo-label">Monto:</span>
-                    <span class="apoyo-value">$500</span>
-                </div>
-                <div class="apoyo-info">
-                    <span class="apoyo-label">Causa:</span>
-                    <span class="apoyo-value">Vacunación y alimentación</span>
-                </div>
-            </div>
 
-            <div class="apoyo-card">
-                <div class="apoyo-info">
-                    <span class="apoyo-label">Mascota:</span>
-                    <span class="apoyo-value">Mimi 🐱</span>
+                <div class="apoyo-card">
+                    <div class="apoyo-info">
+                        <span class="apoyo-label">Mascota:</span>
+                        <span class="apoyo-value">Mimi 🐱</span>
+                    </div>
+                    <div class="apoyo-info">
+                        <span class="apoyo-label">Padrino:</span>
+                        <span class="apoyo-value">Ana López</span>
+                    </div>
+                    <div class="apoyo-info">
+                        <span class="apoyo-label">Monto:</span>
+                        <span class="apoyo-value">$300</span>
+                    </div>
+                    <div class="apoyo-info">
+                        <span class="apoyo-label">Causa:</span>
+                        <span class="apoyo-value">Atención veterinaria</span>
+                    </div>
                 </div>
-                <div class="apoyo-info">
-                    <span class="apoyo-label">Padrino:</span>
-                    <span class="apoyo-value">Ana López</span>
-                </div>
-                <div class="apoyo-info">
-                    <span class="apoyo-label">Monto:</span>
-                    <span class="apoyo-value">$300</span>
-                </div>
-                <div class="apoyo-info">
-                    <span class="apoyo-label">Causa:</span>
-                    <span class="apoyo-value">Atención veterinaria</span>
-                </div>
-            </div>
-
-            <!-- Agrega más tarjetas según lo necesites -->
-        </div>
-        
-    </div>
-</section>
-
-<section class="pets-section" id="mascotas">
-    <div class="pets-container">
-        <div class="section-badge">🐾 Nuestras Mascotas</div>
-        <h2 class="section-title">Conoce a tus futuros mejores amigos</h2>
-        <p class="section-subtitle">
-            Cada mascota tiene una historia única y está esperando un hogar lleno de amor.
-        </p>
-        <div class="pets-grid">
-            <!-- Tarjeta de Chaparro -->
-            <div class="pet-card">
-                <div class="pet-image">
-                    <img src="../static/img/chaparro.jpg" alt="Chaparro" class="pet-img">
-                </div>
-                <h3 class="pet-title">Chaparro</h3>
-                <p class="pet-info"><span class="pet-label">Animal:</span> Perro</p>
-                <p class="pet-info"><span class="pet-label">Sexo:</span> Macho</p>
-                <p class="pet-info"><span class="pet-label">Raza:</span> Mestizo</p>
-                <p class="pet-info"><span class="pet-label">Peso:</span> 10 kg</p>
-                <p class="pet-info"><span class="pet-label">Edad:</span> 3</p>
-                <p class="pet-info"><span class="pet-label">Condiciones:</span> Problema estomacal, necesita 2 operaciones</p>
-                <p class="pet-info"><span class="pet-label">Estado:</span> En tratamiento</p>
-                <a href="#adoptar" class="btn btn-primary btn-small">Adoptar</a>
-            </div>
-            <!-- Tarjeta de Luna -->
-            <div class="pet-card">
-                <div class="pet-image">
-                    <img src="../static/img/Emma.jpg" alt="Luna" class="pet-img">
-                </div>
-                <h3 class="pet-title">Luna</h3>
-                <p class="pet-info"><span class="pet-label">Animal:</span> Perro</p>
-                <p class="pet-info"><span class="pet-label">Sexo:</span> Hembra</p>
-                <p class="pet-info"><span class="pet-label">Raza:</span> Labrador</p>
-                <p class="pet-info"><span class="pet-label">Peso:</span> 25 kg</p>
-                <p class="pet-info"><span class="pet-label">Edad:</span> 2</p>
-                <p class="pet-info"><span class="pet-label">Condiciones:</span> Saludable</p>
-                <p class="pet-info"><span class="pet-label">Estado:</span> Disponible</p>
-                <a href="#adoptar" class="btn btn-primary btn-small">Adoptar</a>
-            </div>
-            <!-- Tarjeta de Max -->
-            <div class="pet-card">
-                <div class="pet-image">
-                    <img src="../static/img/max.jpg" alt="Max" class="pet-img">
-                </div>
-                <h3 class="pet-title">Max</h3>
-                <p class="pet-info"><span class="pet-label">Animal:</span> Perro</p>
-                <p class="pet-info"><span class="pet-label">Sexo:</span> Macho</p>
-                <p class="pet-info"><span class="pet-label">Raza:</span> Pastor Alemán</p>
-                <p class="pet-info"><span class="pet-label">Peso:</span> 30 kg</p>
-                <p class="pet-info"><span class="pet-label">Edad:</span> 5</p>
-                <p class="pet-info"><span class="pet-label">Condiciones:</span> Cojea de la pata trasera izquierda</p>
-                <p class="pet-info"><span class="pet-label">Estado:</span> Disponible</p>
-                <a href="#adoptar" class="btn btn-primary btn-small">Adoptar</a>
-            </div>
-            <!-- Tarjeta de Mimi -->
-            <div class="pet-card">
-                <div class="pet-image">
-                    <img src="../static/img/mimi.jpg" alt="Mimi" class="pet-img">
-                </div>
-                <h3 class="pet-title">Mimi</h3>
-                <p class="pet-info"><span class="pet-label">Animal:</span> Gato</p>
-                <p class="pet-info"><span class="pet-label">Sexo:</span> Hembra</p>
-                <p class="pet-info"><span class="pet-label">Raza:</span> Siamés</p>
-                <p class="pet-info"><span class="pet-label">Peso:</span> 4 kg</p>
-                <p class="pet-info"><span class="pet-label">Edad:</span> 1</p>
-                <p class="pet-info"><span class="pet-label">Condiciones:</span> Saludable</p>
-                <p class="pet-info"><span class="pet-label">Estado:</span> Disponible</p>
-                <a href="#adoptar" class="btn btn-primary btn-small">Adoptar</a>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<script>
-// Aplicar animaciones a las tarjetas de mascotas
-document.addEventListener('DOMContentLoaded', () => {
-    const tarjetas = document.querySelectorAll('.pet-card');
-    tarjetas.forEach(elemento => {
-        elemento.style.opacity = '0';
-        elemento.style.transform = 'translateY(20px)';
-        elemento.style.transition = 'all 0.5s ease';
-        observer.observe(elemento);
-    });
-});
-</script>
+    <!-- Padrinos Section -->
+    <section class="padrinos-section" id="padrinos">
+        <div class="padrinos-container">
+            <div class="section-badge">💖 Nuestros Padrinos</div>
+            <h2 class="section-title">Gracias a ellos, cada mascota tiene una nueva oportunidad</h2>
+            <p class="section-subtitle">
+                Nuestros padrinos son corazones generosos que apoyan a las mascotas con recursos y cariño, 
+                asegurando que estén listas para encontrar su hogar ideal.
+            </p>
+
+            <div class="padrinos-description">
+                <h3 class="padrinos-description-title">¿Qué es un Padrino?</h3>
+                <p class="padrinos-description-text">
+                    Un padrino es una persona que contribuye con recursos económicos o materiales para cubrir las necesidades 
+                    de nuestras mascotas, como alimentación, atención veterinaria o tratamientos especiales. Gracias a ellos, 
+                    podemos garantizar que cada animalito esté sano y feliz mientras espera su hogar definitivo.
+                </p>
+            </div>
+
+            <div class="padrinos-grid">
+                <div class="padrino-card">
+                    <h3 class="padrino-title">Juan Pérez</h3>
+                    <p class="padrino-info"><span class="padrino-label">Sexo:</span> Masculino</p>
+                    <p class="padrino-info"><span class="padrino-label">Teléfono:</span> 1234567890</p>
+                    <p class="padrino-info"><span class="padrino-label">Correo:</span> juan.perez@example.com</p>
+                    <p class="padrino-info"><span class="padrino-label">Historia:</span> Juan ayudó a Fido, un perrito mestizo, cubriendo los costos de su vacunación y alimentación, dándole una nueva oportunidad para encontrar un hogar.</p>
+                </div>
+                <div class="padrino-card">
+                    <h3 class="padrino-title">Ana López</h3>
+                    <p class="padrino-info"><span class="padrino-label">Sexo:</span> Femenino</p>
+                    <p class="padrino-info"><span class="padrino-label">Teléfono:</span> 9876543210</p>
+                    <p class="padrino-info"><span class="padrino-label">Correo:</span> ana.lopez@example.com</p>
+                    <p class="padrino-info"><span class="padrino-label">Historia:</span> Ana apoyó a Mimi, una gatita siamesa, financiando su atención veterinaria para tratar una infección, asegurando que esté saludable para su adopción.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pets Section -->
+    <section class="pets-section" id="mascotas">
+        <div class="pets-container">
+            <div class="section-badge">🐾 Nuestras Mascotas</div>
+            <h2 class="section-title">Conoce a tus futuros mejores amigos</h2>
+            <p class="section-subtitle">
+                Cada mascota tiene una historia única y está esperando un hogar lleno de amor.
+            </p>
+            <div class="pets-grid">
+                <div class="pet-card">
+                    <div class="pet-image">
+                        <img src="../static/img/chaparro.jpg" alt="Chaparro" class="pet-img">
+                    </div>
+                    <h3 class="pet-title">Chaparro</h3>
+                    <p class="pet-info"><span class="pet-label">Animal:</span> Perro</p>
+                    <p class="pet-info"><span class="pet-label">Sexo:</span> Macho</p>
+                    <p class="pet-info"><span class="pet-label">Raza:</span> Mestizo</p>
+                    <p class="pet-info"><span class="pet-label">Peso:</span> 10 kg</p>
+                    <p class="pet-info"><span class="pet-label">Edad:</span> 3</p>
+                    <p class="pet-info"><span class="pet-label">Condiciones:</span> Problema estomacal, necesita 2 operaciones</p>
+                    <p class="pet-info"><span class="pet-label">Estado:</span> En tratamiento</p>
+                    <a href="#adoptar" class="btn btn-primary btn-small">Adoptar</a>
+                </div>
+                <div class="pet-card">
+                    <div class="pet-image">
+                        <img src="../static/img/Emma.jpg" alt="Luna" class="pet-img">
+                    </div>
+                    <h3 class="pet-title">Luna</h3>
+                    <p class="pet-info"><span class="pet-label">Animal:</span> Perro</p>
+                    <p class="pet-info"><span class="pet-label">Sexo:</span> Hembra</p>
+                    <p class="pet-info"><span class="pet-label">Raza:</span> Labrador</p>
+                    <p class="pet-info"><span class="pet-label">Peso:</span> 25 kg</p>
+                    <p class="pet-info"><span class="pet-label">Edad:</span> 2</p>
+                    <p class="pet-info"><span class="pet-label">Condiciones:</span> Saludable</p>
+                    <p class="pet-info"><span class="pet-label">Estado:</span> Disponible</p>
+                    <a href="#adoptar" class="btn btn-primary btn-small">Adoptar</a>
+                </div>
+                <div class="pet-card">
+                    <div class="pet-image">
+                        <img src="../static/img/max.jpg" alt="Max" class="pet-img">
+                    </div>
+                    <h3 class="pet-title">Max</h3>
+                    <p class="pet-info"><span class="pet-label">Animal:</span> Perro</p>
+                    <p class="pet-info"><span class="pet-label">Sexo:</span> Macho</p>
+                    <p class="pet-info"><span class="pet-label">Raza:</span> Pastor Alemán</p>
+                    <p class="pet-info"><span class="pet-label">Peso:</span> 30 kg</p>
+                    <p class="pet-info"><span class="pet-label">Edad:</span> 5</p>
+                    <p class="pet-info"><span class="pet-label">Condiciones:</span> Cojea de la pata trasera izquierda</p>
+                    <p class="pet-info"><span class="pet-label">Estado:</span> Disponible</p>
+                    <a href="#adoptar" class="btn btn-primary btn-small">Adoptar</a>
+                </div>
+                <div class="pet-card">
+                    <div class="pet-image">
+                        <img src="../static/img/mimi.jpg" alt="Mimi" class="pet-img">
+                    </div>
+                    <h3 class="pet-title">Mimi</h3>
+                    <p class="pet-info"><span class="pet-label">Animal:</span> Gato</p>
+                    <p class="pet-info"><span class="pet-label">Sexo:</span> Hembra</p>
+                    <p class="pet-info"><span class="pet-label">Raza:</span> Siamés</p>
+                    <p class="pet-info"><span class="pet-label">Peso:</span> 4 kg</p>
+                    <p class="pet-info"><span class="pet-label">Edad:</span> 1</p>
+                    <p class="pet-info"><span class="pet-label">Condiciones:</span> Saludable</p>
+                    <p class="pet-info"><span class="pet-label">Estado:</span> Disponible</p>
+                    <a href="#adoptar" class="btn btn-primary btn-small">Adoptar</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer" id="contacto">
@@ -1372,19 +1550,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 entre mascotas y familias. Cada historia de adopción es una nueva oportunidad de amor.
             </p>
 
-<div class="footer-links">
-    <a href="#inicio" class="footer-link">Inicio</a>
-    <a href="#adoptar" class="footer-link">Adoptar</a>
-    <a href="#nosotros" class="footer-link">Nosotros</a>
-    <a href="login.html" class="footer-link">Iniciar Sesión</a>
-    <a href="registro.html" class="footer-link">Registro</a>
-    <a href="#mascotas" class="footer-link">Mascotas</a>
-    <a href="#" class="footer-link">Políticas</a>
-    <a href="#" class="footer-link">Términos</a>
-</div>
+            <div class="footer-links">
+                <a href="#inicio" class="footer-link">Inicio</a>
+                <a href="#adoptar" class="footer-link">Adoptar</a>
+                <a href="#apoyos" class="footer-link">Apoyos</a>
+                <a href="#padrinos" class="footer-link">Padrinos</a>
+                <a href="#nosotros" class="footer-link">Nosotros</a>
+                <a href="login.html" class="footer-link">Iniciar Sesión</a>
+                <a href="registro.html" class="footer-link">Registro</a>
+                <a href="#mascotas" class="footer-link">Mascotas</a>
+                <a href="#" class="footer-link">Políticas</a>
+                <a href="#" class="footer-link">Términos</a>
+            </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2024 UnAmigoTeEspera.com - Todos los derechos reservados. Hecho con 💕 para conectar corazones con patitas.</p>
+                <p>&copy; 2025 UnAmigoTeEspera.com - Todos los derechos reservados. Hecho con 💕 para conectar corazones con patitas.</p>
             </div>
         </div>
     </footer>
@@ -1428,10 +1608,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }, observerOptions);
 
         // Observar elementos para animaciones
-        document.querySelectorAll('.feature-card, .cta-container').forEach(el => {
+        document.querySelectorAll('.feature-card, .cta-container, .pet-card, .padrino-card').forEach(el => {
             el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 0.6s ease';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.5s ease';
             observer.observe(el);
         });
 
@@ -1556,7 +1736,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 img.style.opacity = '1';
             });
             
-            // Fallback in case image fails to load
             img.addEventListener('error', () => {
                 img.style.opacity = '0.5';
                 img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik01MCA0MEM0NiA0MCA0MyA0MyA0MyA0N1M0NiA1NCA1MCA1NFM1NyA1MSA1NyA0N1M1NCA0MCA1MCA0MFoiIGZpbGw9IiM5Q0E0QUYiLz4KPHBhdGggZD0iTTMwIDcwTDQwIDU1TDUwIDY1TDcwIDQwTDg1IDcwSDMwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K';
@@ -1578,12 +1757,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     </script>
 
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-            .then(reg => console.log('Service Worker registrado', reg))
-            .catch(err => console.log('Error al registrar SW', err));
-    });
-}
-</script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('Service Worker registrado', reg))
+                    .catch(err => console.log('Error al registrar SW', err));
+            });
+        }
+    </script>
+</body>
+</html>
