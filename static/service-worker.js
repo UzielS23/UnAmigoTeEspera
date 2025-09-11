@@ -10,7 +10,7 @@ const urlsToCache = [
     '/static/img/mimi.jpg'
 ];
 
-// Instalación del SW
+
 self.addEventListener('install', event => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -19,10 +19,10 @@ self.addEventListener('install', event => {
                 return cache.addAll(urlsToCache);
             })
     );
-    self.skipWaiting(); // activa el SW inmediatamente
+    self.skipWaiting(); 
 });
 
-// Activación del SW
+
 self.addEventListener('activate', event => {
     event.waitUntil(
         caches.keys().then(keys => {
@@ -32,10 +32,10 @@ self.addEventListener('activate', event => {
             );
         })
     );
-    self.clients.claim(); // toma control de las páginas abiertas
+    self.clients.claim(); 
 });
 
-// Interceptar peticiones
+
 self.addEventListener('fetch', event => {
     event.respondWith(
         caches.match(event.request).then(cachedResponse => {
@@ -43,18 +43,18 @@ self.addEventListener('fetch', event => {
                 return cachedResponse;
             }
 
-            // Si no está en cache, lo buscamos online
+           
             return fetch(event.request).then(networkResponse => {
-                // Guardamos en cache para futuras peticiones
+               
                 return caches.open(CACHE_NAME).then(cache => {
-                    // Solo cacheamos respuestas válidas
+                    
                     if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
                         cache.put(event.request, networkResponse.clone());
                     }
                     return networkResponse;
                 });
             }).catch(() => {
-                // fallback si no hay conexión
+              
                 if (event.request.destination === 'image') {
                     return caches.match('/static/img/logo.png');
                 }

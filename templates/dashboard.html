@@ -90,12 +90,13 @@
             padding: 1rem 2rem;
         }
 
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-        }
+       .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* espacio entre imagen y texto */
+    text-decoration: none;
+    margin-right: 2rem; /* separa logo del menú */
+}
 
         .nav-logo-img {
             width: 50px;
@@ -116,6 +117,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            padding-left: 0.5rem;
         }
 
         .nav-menu {
@@ -1571,7 +1573,7 @@
 
     <script>
         // Smooth scrolling para los enlaces de navegación
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
@@ -1583,6 +1585,7 @@
                 }
             });
         });
+
 
         // Efecto parallax sutil en scroll
         window.addEventListener('scroll', () => {
@@ -1730,7 +1733,7 @@
         // Loading placeholders for images
         document.querySelectorAll('img').forEach(img => {
             img.style.transition = 'opacity 0.3s ease';
-            img.style.opacity = '0';
+           img.style.opacity = img.complete ? '1' : '0';
             
             img.addEventListener('load', () => {
                 img.style.opacity = '1';
