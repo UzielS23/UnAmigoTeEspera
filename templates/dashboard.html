@@ -1057,6 +1057,124 @@
             }
         }
 
+        /* Sección de Refugios */
+        .refugios-section {
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .refugios-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .refugios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .refugio-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .refugio-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .refugio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(16, 185, 129, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .refugio-card:hover::before {
+            opacity: 1;
+        }
+
+        .refugio-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .refugio-icon {
+            font-size: 1.5rem;
+        }
+
+        .refugio-info {
+            color: #64748b;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .refugio-label {
+            font-weight: 600;
+            color: #1e293b;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        .refugio-description {
+            color: #475569;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .refugio-contact {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .refugio-contact-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .refugio-contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .refugio-contact-item {
+            color: #64748b;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
         /* Sección de Padrinos */
         .padrinos-section {
             padding: 4rem 2rem;
@@ -1227,6 +1345,75 @@
                 font-size: 0.8rem;
             }
         }
+
+        /* Estilos responsivos para refugios */
+        @media (max-width: 1024px) {
+            .refugios-grid {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .refugio-card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .refugios-section {
+                padding: 3rem 1rem;
+            }
+
+            .refugios-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+
+            .refugio-card {
+                padding: 1.2rem;
+            }
+
+            .refugio-title {
+                font-size: 1.2rem;
+            }
+
+            .refugio-info {
+                font-size: 0.85rem;
+            }
+
+            .refugio-description {
+                font-size: 0.8rem;
+            }
+
+            .refugio-contact-item {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .refugios-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .refugio-card {
+                padding: 1rem;
+            }
+
+            .refugio-title {
+                font-size: 1.1rem;
+            }
+
+            .refugio-info {
+                font-size: 0.8rem;
+            }
+
+            .refugio-description {
+                font-size: 0.75rem;
+            }
+
+            .refugio-contact-item {
+                font-size: 0.7rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1246,6 +1433,7 @@
                 <a href="#adoptar" class="nav-link">Adoptar</a>
                 <a href="#apoyos" class="nav-link">Apoyos</a>
                 <a href="#padrinos" class="nav-link">Padrinos</a>
+                <a href="#refugios" class="nav-link">Refugios</a>
                 <a href="#nosotros" class="nav-link">Nosotros</a>
                 <a href="#contacto" class="nav-link">Contacto</a>
                 <a href="#mascotas" class="nav-link">Adopta</a>
@@ -1542,6 +1730,154 @@
         </div>
     </section>
 
+    <!-- Refugios Section -->
+    <section class="refugios-section" id="refugios">
+        <div class="refugios-container">
+            <div class="section-badge">🏠 Refugios Aliados</div>
+            <h2 class="section-title">Conoce nuestros refugios colaboradores</h2>
+            <p class="section-subtitle">
+                Trabajamos con refugios comprometidos que brindan amor y cuidado a las mascotas mientras esperan su hogar definitivo.
+            </p>
+            
+            <div class="refugios-grid">
+                <div class="refugio-card">
+                    <h3 class="refugio-title">
+                        <span class="refugio-icon">🏡</span>
+                        Refugio Esperanza Animal
+                    </h3>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Ubicación:</span> Av. Principal 123, Ciudad de México
+                    </p>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Capacidad:</span> 150 animales
+                    </p>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Especialidad:</span> Perros y gatos abandonados
+                    </p>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Años operando:</span> 12 años
+                    </p>
+                    <p class="refugio-description">
+                        Un refugio dedicado al rescate y rehabilitación de perros y gatos abandonados. 
+                        Cuenta con instalaciones veterinarias propias y un equipo de voluntarios comprometidos 
+                        con el bienestar animal. Ofrece programas de adopción responsable y educación comunitaria.
+                    </p>
+                    <div class="refugio-contact">
+                        <h4 class="refugio-contact-title">Información de Contacto:</h4>
+                        <div class="refugio-contact-info">
+                            <div class="refugio-contact-item">📞 55-1234-5678</div>
+                            <div class="refugio-contact-item">✉️ contacto@esperanzaanimal.org</div>
+                            <div class="refugio-contact-item">🌐 www.esperanzaanimal.org</div>
+                            <div class="refugio-contact-item">🕒 Lun-Dom: 9:00 AM - 6:00 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="refugio-card">
+                    <h3 class="refugio-title">
+                        <span class="refugio-icon">🐾</span>
+                        Hogar Felino San Luis
+                    </h3>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Ubicación:</span> Calle Luna 456, San Luis Potosí
+                    </p>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Capacidad:</span> 80 animales
+                    </p>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Especialidad:</span> Gatos rescatados
+                    </p>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Años operando:</span> 8 años
+                    </p>
+                    <p class="refugio-description">
+                        Refugio especializado en el cuidado de gatos callejeros y abandonados. 
+                        Implementa programas de esterilización y cuenta con áreas de socialización 
+                        para preparar a los felinos para la adopción. También ofrece servicios de 
+                        atención veterinaria a bajo costo para la comunidad.
+                    </p>
+                    <div class="refugio-contact">
+                        <h4 class="refugio-contact-title">Información de Contacto:</h4>
+                        <div class="refugio-contact-info">
+                            <div class="refugio-contact-item">📞 444-987-6543</div>
+                            <div class="refugio-contact-item">✉️ info@hogarfelino.com</div>
+                            <div class="refugio-contact-item">🌐 www.hogarfelino.com</div>
+                            <div class="refugio-contact-item">🕒 Mar-Dom: 10:00 AM - 5:00 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="refugio-card">
+                    <h3 class="refugio-title">
+                        <span class="refugio-icon">❤️</span>
+                        Santuario Patitas Libres
+                    </h3>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Ubicación:</span> Carretera Nacional km 15, Guadalajara
+                    </p>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Capacidad:</span> 200 animales
+                    </p>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Especialidad:</span> Animales con discapacidades
+                    </p>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Años operando:</span> 15 años
+                    </p>
+                    <p class="refugio-description">
+                        Santuario enfocado en el cuidado de animales con discapacidades físicas o 
+                        enfermedades crónicas. Cuenta con instalaciones adaptadas y personal especializado 
+                        en cuidados especiales. Su misión es demostrar que todos los animales merecen 
+                        amor y una segunda oportunidad, sin importar sus limitaciones.
+                    </p>
+                    <div class="refugio-contact">
+                        <h4 class="refugio-contact-title">Información de Contacto:</h4>
+                        <div class="refugio-contact-info">
+                            <div class="refugio-contact-item">📞 33-2468-1357</div>
+                            <div class="refugio-contact-item">✉️ santuario@patitaslibres.mx</div>
+                            <div class="refugio-contact-item">🌐 www.patitaslibres.mx</div>
+                            <div class="refugio-contact-item">🕒 Lun-Sáb: 8:00 AM - 7:00 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="refugio-card">
+                    <h3 class="refugio-title">
+                        <span class="refugio-icon">🌟</span>
+                        Centro de Rescate Nuevo Amanecer
+                    </h3>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Ubicación:</span> Blvd. Revolución 789, Monterrey
+                    </p>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Capacidad:</span> 120 animales
+                    </p>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Especialidad:</span> Rehabilitación animal
+                    </p>
+                    <p class="refugio-info">
+                        <span class="refugio-label">Años operando:</span> 10 años
+                    </p>
+                    <p class="refugio-description">
+                        Centro especializado en la rehabilitación de animales maltratados o traumatizados. 
+                        Cuenta con terapeutas especializados en comportamiento animal y programas de 
+                        entrenamiento para facilitar la adopción. También ofrece talleres educativos 
+                        sobre tenencia responsable de mascotas.
+                    </p>
+                    <div class="refugio-contact">
+                        <h4 class="refugio-contact-title">Información de Contacto:</h4>
+                        <div class="refugio-contact-info">
+                            <div class="refugio-contact-item">📞 81-3691-2580</div>
+                            <div class="refugio-contact-item">✉️ rescate@nuevoamanecer.org</div>
+                            <div class="refugio-contact-item">🌐 www.nuevoamanecer.org</div>
+                            <div class="refugio-contact-item">🕒 Lun-Vie: 9:00 AM - 6:00 PM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="footer" id="contacto">
         <div class="footer-container">
@@ -1560,6 +1896,7 @@
                 <a href="#adoptar" class="footer-link">Adoptar</a>
                 <a href="#apoyos" class="footer-link">Apoyos</a>
                 <a href="#padrinos" class="footer-link">Padrinos</a>
+                <a href="#refugios" class="footer-link">Refugios</a>
                 <a href="#nosotros" class="footer-link">Nosotros</a>
                 <a href="login.html" class="footer-link">Iniciar Sesión</a>
                 <a href="registro.html" class="footer-link">Registro</a>

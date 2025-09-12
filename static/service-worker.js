@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unamigoteeespera-cache-v9';
+const CACHE_NAME = 'unamigoteeespera-cache-v10';
 const urlsToCache = [
     '/',
     '/static/img/logo.png',
