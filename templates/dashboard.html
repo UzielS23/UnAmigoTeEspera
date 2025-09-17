@@ -318,18 +318,23 @@
         .hero-image {
             position: relative;
             animation: fadeInRight 0.8s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
         }
 
         .hero-main-image {
             width: 100%;
-            max-width: 500px;
-            height: 400px;
+            max-width: 100%;
+            height: auto;
             border-radius: 30px;
             object-fit: cover;
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
             animation: float 6s ease-in-out infinite;
             margin: 0 auto;
             display: block;
+            max-height: 60vh; /* limita alto en pantallas pequeñas */
         }
 
         @keyframes float {
@@ -721,6 +726,37 @@
             }
         }
 
+        /* Reglas adicionales para asegurar responsividad completa */
+        img, .hero-main-image, .pet-img, .nav-logo-img, .trust-avatar {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Ajustes para menú móvil cuando está activo */
+        .nav-menu.active {
+            display: flex !important;
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 100%;
+            margin: 0.5rem;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        /* Breakpoint extra para pantallas muy pequeñas */
+        @media (max-width: 360px) {
+            .hero-title { font-size: 1.6rem; }
+            .hero-subtitle { font-size: 0.95rem; }
+            .section-title { font-size: 1.2rem; }
+            .pets-grid { gap: 0.4rem; }
+            .pet-title { font-size: 0.85rem; }
+            .pet-info { font-size: 0.6rem; }
+            .btn-small { padding: 0.2rem 0.6rem; font-size: 0.6rem; }
+        }
+
         /* Mobile menu toggle */
         .mobile-menu-toggle {
             display: none;
@@ -896,26 +932,35 @@
 
         .pet-image {
             width: 100%;
-            padding-top: 100%; /* Relación de aspecto 1:1 para evitar cortes */
             position: relative;
             border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.6rem;
             background: #f1f5f9; /* Fondo claro para espacios vacíos */
+            aspect-ratio: 1 / 1; /* mantener 1:1 usando aspect-ratio */
         }
 
         .pet-img {
             position: absolute;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Mostrar imagen completa sin cortes */
+            object-fit: cover; /* cubrir el contenedor sin distorsión */
             transition: transform 0.3s ease;
         }
 
         .pet-card:hover .pet-img {
-            transform: scale(1.05);
+            transform: scale(1.03);
+        }
+
+        /* Utilidades responsivas adicionales */
+        .container {
+            width: 100%;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 1200px;
         }
 
         .pet-title {
@@ -1496,17 +1541,6 @@
 
             <div class="hero-image">
                 <img src="../static/img/descarga (17).jpg" alt="Mascota esperando adopción" class="hero-main-image">
-                
-                <div class="floating-cards">
-                    <div class="floating-card floating-card-1">
-                        <div class="card-icon card-icon-1">💚</div>
-                        <div class="card-text">Adopción responsable</div>
-                    </div>
-                    <div class="floating-card floating-card-2">
-                        <div class="card-icon card-icon-2">⭐</div>
-                        <div class="card-text">Amor garantizado</div>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -2108,6 +2142,31 @@
                     .catch(err => console.log('Error al registrar SW', err));
             });
         }
+    </script>
+    <script>
+        // Toggle para menú móvil
+        (function(){
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            const menu = document.querySelector('.nav-menu');
+            if (!toggle || !menu) return;
+
+            toggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                menu.classList.toggle('active');
+            });
+
+            // Cerrar al dar click fuera
+            document.addEventListener('click', (e) => {
+                if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+                    menu.classList.remove('active');
+                }
+            });
+
+            // Cerrar al seleccionar un enlace
+            menu.querySelectorAll('a').forEach(a => {
+                a.addEventListener('click', () => menu.classList.remove('active'));
+            });
+        })();
     </script>
 </body>
 </html>
