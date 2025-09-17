@@ -49,6 +49,15 @@
             animation: backgroundFloat 15s ease-in-out infinite;
         }
 
+        /* Asegurar que la barra de navegación y menús estén por encima de elementos decorativos */
+        .navbar { z-index: 1100; }
+        .nav-menu { z-index: 1105; }
+
+        /* Compensar contenido para navbar fijo: agregar padding-top a las secciones principales */
+        .hero-section, .features-section, .cta-section, .pets-section, .refugios-section, .apoyos-section, .padrinos-section {
+            padding-top: calc(80px + 1rem); /* 80px aproximado del navbar + margen */
+        }
+
         @keyframes backgroundFloat {
             0%, 100% { 
                 transform: translateX(0) translateY(0) rotate(0deg);
@@ -91,12 +100,14 @@
         }
 
        .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem; /* espacio entre imagen y texto */
-    text-decoration: none;
-    margin-right: 2rem; /* separa logo del menú */
-}
+            display: flex;
+            align-items: center;
+            gap: 1rem; /* espacio entre imagen y texto */
+            text-decoration: none;
+            margin-right: 1rem;
+            flex: 0 0 auto;
+            max-width: 260px; /* limitar ancho para que no empuje el menú */
+        }
 
         .nav-logo-img {
             width: 50px;
@@ -111,19 +122,24 @@
         }
 
         .nav-logo-text {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
             background: linear-gradient(135deg, #1e40af, #3b82f6, #10b981);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            padding-left: 0.5rem;
+            padding-left: 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; /* evitar que el texto empuje o se superponga */
         }
 
         .nav-menu {
             display: flex;
-            gap: 2rem;
+            flex: 1 1 auto; /* permitir que el menú ocupe el espacio restante */
+            gap: 1rem;
             align-items: center;
+            justify-content: flex-end;
         }
 
         .nav-link {
@@ -201,6 +217,7 @@
             display: flex;
             align-items: center;
            padding: 100px 2rem 0 2rem; 
+            overflow: hidden; /* evitar que elementos posicionados provoquen overflow horizontal */
             
             position: relative;
             z-index: 1;
@@ -322,6 +339,7 @@
             align-items: center;
             justify-content: center;
             width: 100%;
+            overflow: hidden; /* contener imágenes y tarjetas flotantes dentro del área */
         }
 
         .hero-main-image {
@@ -344,6 +362,9 @@
 
         .floating-cards {
             position: absolute;
+            pointer-events: none; /* evitar interacciones inesperadas */
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .floating-card {
@@ -356,21 +377,34 @@
             animation: floatCard 4s ease-in-out infinite;
         }
 
+        /* En pantallas medianas/pequeñas, ocultar o replantear las tarjetas flotantes */
+        @media (max-width: 1024px) {
+            .floating-card { display: none; }
+        }
+
         .floating-card-1 {
             top: -20px;
-            right: -40px;
+            right: -6%; /* usar porcentaje para mantener responsividad */
             animation-delay: 0s;
         }
 
         .floating-card-2 {
             bottom: -30px;
-            left: -50px;
+            left: -8%; /* usar porcentaje para mantener responsividad */
             animation-delay: 2s;
         }
 
         @keyframes floatCard {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        /* En pantallas medianas y pequeñas ocultar completamente para evitar solapamientos */
+        @media (max-width: 1280px) {
+            .floating-card-1,
+            .floating-card-2 {
+                display: none;
+            }
         }
 
         .card-icon {
@@ -575,12 +609,19 @@
             backdrop-filter: blur(20px);
             color: white;
             padding: 3rem 2rem 2rem;
+            box-sizing: border-box;
+            width: 100%;
+            left: 0;
+            right: 0;
+            overflow: hidden; /* evita que elementos internos provoquen scroll horizontal */
             text-align: center;
         }
 
         .footer-container {
             max-width: 1200px;
             margin: 0 auto;
+            padding-left: 1rem; /* asegurar espacio interior en pantallas pequeñas */
+            padding-right: 1rem;
         }
 
         .footer-logo {
@@ -588,6 +629,7 @@
             align-items: center;
             justify-content: center;
             gap: 1rem;
+            flex-wrap: wrap; /* permitir que el texto baje a la siguiente línea si hace falta */
             margin-bottom: 2rem;
         }
 
@@ -599,12 +641,28 @@
         }
 
         .footer-logo-text {
-            font-size: 1.8rem;
+            /* escalar entre 1rem y 1.8rem según el ancho de la pantalla */
+            font-size: clamp(1rem, 4vw, 1.8rem);
             font-weight: 700;
             background: linear-gradient(135deg, #60a5fa, #34d399, #fbbf24);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        /* En pantallas extremadamente pequeñas, priorizar el logo gráfico y reducir el texto */
+        @media (max-width: 340px) {
+            .footer-logo-text {
+                font-size: 0.95rem;
+                white-space: normal;
+                text-align: center;
+                width: 100%;
+                display: block;
+            }
+
+            .footer-logo {
+                gap: 0.5rem;
+            }
         }
 
         .footer-description {
@@ -641,6 +699,27 @@
             padding-top: 2rem;
             color: #94a3b8;
             font-size: 0.9rem;
+        }
+
+        /* Ajustes específicos para pantallas pequeñas para evitar franjas sin fondo */
+        @media (max-width: 480px) {
+            .footer {
+                padding: 2rem 0 1.5rem; /* reducir padding horizontal y asegurar full-bleed visual */
+            }
+
+            .footer-logo-img {
+                width: 48px;
+                height: 48px;
+            }
+
+            .footer-links {
+                gap: 1rem;
+                padding: 0 0.5rem;
+            }
+
+            .footer-description {
+                padding: 0 0.5rem;
+            }
         }
 
         /* Animaciones */
@@ -707,6 +786,12 @@
             .floating-card-1,
             .floating-card-2 {
                 display: none;
+            }
+            /* Reducir movimiento de fondo en tablets/móviles para evitar solapamientos visuales */
+            .background-pattern {
+                animation: none;
+                transform: none !important;
+                opacity: 0.04;
             }
         }
 
@@ -803,6 +888,18 @@
             .nav-buttons {
                 display: none; /* Oculto los botones grandes en móviles */
             }
+        }
+
+        @media (max-width: 1024px) {
+            .nav-container { padding: 0.6rem 1rem; }
+            .nav-logo-text { font-size: 1rem; max-width: 160px; }
+            .nav-logo-img { width: 44px; height: 44px; }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container { padding: 0.5rem 0.75rem; }
+            .nav-logo { gap: 0.5rem; }
+            .nav-logo-text { font-size: 0.95rem; }
         }
 
         .apoyos-section {
@@ -2018,15 +2115,8 @@
         });
 
         // Mobile menu functionality
-        const mobileToggle = document.querySelector('.mobile-menu-toggle');
-        const navMenu = document.querySelector('.nav-menu');
-
-        if (mobileToggle) {
-            mobileToggle.addEventListener('click', () => {
-                navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
-                mobileToggle.classList.toggle('active');
-            });
-        }
+        // Nota: el manejo del menú móvil ahora se realiza por otro script que aplica la clase `.active`
+        // para evitar conflictos entre manipulación de estilos inline y clases CSS.
 
         // Counter animation for stats
         function animateCounters() {
