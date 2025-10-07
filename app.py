@@ -2,7 +2,6 @@ from flask import Flask, render_template, send_from_directory
 
 app = Flask(__name__)
 
-
 @app.route('/')
 def index():
     return render_template('dashboard.html')
@@ -14,7 +13,6 @@ def dashboard_graficas():
 @app.route('/service-worker.js')
 def service_worker():
     return send_from_directory('static', 'service-worker.js')
-
 
 @app.route('/manifest.json')
 def manifest():
@@ -42,10 +40,8 @@ def notificaciones():
 
 @app.route("/partials/<name>")
 def partials(name):
-   
     return render_template(f"{name}.html")
 
 if __name__ == '__main__':
-    app.run(debug=True)
-
-
+    # Cambiado para acceder desde otros dispositivos en la misma red
+    app.run(host='0.0.0.0', port=5000, debug=True)
