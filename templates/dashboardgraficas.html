@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - UnAmigoTeEspera.com</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            background: #f8fafc;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+        }
+
+        .sidebar-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            color: white;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 0.5rem;
+            font-weight: 400;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 1.5rem 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-link {
+            padding: 1rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin: 0.3rem 1rem;
+            border-radius: 12px;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            transform: translateX(5px);
+        }
+
+        .sidebar-link.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .sidebar-link .icon {
+            font-size: 1.3rem;
+            width: 30px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 25%, #fef3c7 50%, #ecfdf5 75%, #f3e8ff 100%);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            overflow: hidden;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Topbar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #1e293b;
+            padding: 0.5rem;
+        }
+
+        .topbar-welcome {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e40af, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .topbar-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .topbar-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .topbar-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .topbar-btn.secondary {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            box-shadow: none;
+            border: 2px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .topbar-btn.secondary:hover {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        .content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.3);
+            border-radius: 10px;
+        }
+
+        .content::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.5);
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+        }
+
+        .content-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .content-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            border-radius: 10px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+
+        .stat-icon.orange {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+        }
+
+        .stat-icon.purple {
+            background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 2000;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .topbar {
+                padding: 1rem;
+            }
+
+            .content {
+                padding: 1rem;
+            }
+
+            .topbar-welcome {
+                font-size: 1.2rem;
+            }
+
+            .topbar-actions {
+                gap: 0.5rem;
+            }
+
+            .topbar-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .topbar-btn span {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+
+            .content-card {
+                padding: 1.5rem;
+            }
+
+            .content-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Overlay for mobile menu */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1500;
+            backdrop-filter: blur(4px);
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-card {
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .content-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .content-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+    </style>
+</head>
+<body>
+    <!-- Overlay para móvil -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Barra lateral -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                🐾 Dashboard
+            </div>
+            <div class="sidebar-subtitle">Panel de Control</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="sidebar-link active" data-file="inicio">
+                <span class="icon">📊</span>
+                <span>Inicio</span>
+            </div>
+            <div class="sidebar-link" data-file="apoyos">
+                <span class="icon">💸</span>
+                <span>Apoyos</span>
+            </div>
+            <div class="sidebar-link" data-file="padrinos">
+                <span class="icon">🤝</span>
+                <span>Padrinos</span>
+            </div>
+            <div class="sidebar-link" data-file="mascotas">
+                <span class="icon">🐶</span>
+                <span>Mascotas</span>
+            </div>
+            <div class="sidebar-link" data-file="refugios">
+                <span class="icon">🏡</span>
+                <span>Refugios</span>
+            </div>
+            <div class="sidebar-link" data-file="notificaciones">
+                <span class="icon">🔔</span>
+                <span>Notificaciones</span>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <!-- Barra superior -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+            </div>
+            <div class="topbar-actions">
+                <button class="topbar-btn secondary" onclick="loadNotifications()">
+                    🔔 <span>Notificaciones</span>
+                </button>
+                <button class="topbar-btn" onclick="window.location.href='/login'">
+                    🔑 <span>Iniciar Sesión</span>
+                </button>
+                <button id="install-btn" class="topbar-btn" style="display:none;">
+                    📲 <span>Instalar App</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Área de contenido -->
+        <main class="content" id="content-area">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">💰</div>
+                    <div class="stat-value">$12,500</div>
+                    <div class="stat-label">Total Donaciones</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">🤝</div>
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">Padrinos Activos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">🐶</div>
+                    <div class="stat-value">128</div>
+                    <div class="stat-label">Mascotas en Refugios</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">🏡</div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Refugios Registrados</div>
+                </div>
+            </div>
+
+            <!-- Contenido inicial con gráficas -->
+            <div id="initial-charts">
+                <div class="content-card">
+                    <h2 class="content-title">Top 3 Padrinos con más aportes</h2>
+                    <div class="chart-container">
+                        <canvas id="chartPadrinos"></canvas>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <h2 class="content-title">Top 3 Refugios que necesitan más ayuda</h2>
+                    <div class="chart-container">
+                        <canvas id="chartRefugios"></canvas>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <h2 class="content-title">Distribución de Mascotas por categoría</h2>
+                    <div class="chart-container">
+                        <canvas id="chartMascotas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Inicializar gráficas iniciales
+        function initCharts() {
+            new Chart(document.getElementById("chartPadrinos"), {
+                type: "bar",
+                data: { 
+                    labels: ["María", "Carlos", "Ana"], 
+                    datasets:[{
+                        label:"Donación ($)", 
+                        data:[500,300,200], 
+                        backgroundColor:[
+                            'rgba(72, 187, 120, 0.8)',
+                            'rgba(99, 179, 237, 0.8)',
+                            'rgba(237, 137, 54, 0.8)'
+                        ],
+                        borderColor:[
+                            'rgb(72, 187, 120)',
+                            'rgb(99, 179, 237)',
+                            'rgb(237, 137, 54)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }] 
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById("chartRefugios"), {
+                type: "bar",
+                data: { 
+                    labels:["Esperanza","Huellitas","Manos Amigas"], 
+                    datasets:[{
+                        label:"Necesidad (%)", 
+                        data:[90,70,50], 
+                        backgroundColor:[
+                            'rgba(245, 101, 101, 0.8)',
+                            'rgba(237, 137, 54, 0.8)',
+                            'rgba(236, 201, 75, 0.8)'
+                        ],
+                        borderColor:[
+                            'rgb(245, 101, 101)',
+                            'rgb(237, 137, 54)',
+                            'rgb(236, 201, 75)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }] 
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById("chartMascotas"), {
+                type:"pie",
+                data: { 
+                    labels:["Perros","Gatos","Otros"], 
+                    datasets:[{
+                        data:[60,30,10], 
+                        backgroundColor:[
+                            'rgba(66, 153, 225, 0.8)',
+                            'rgba(159, 122, 234, 0.8)',
+                            'rgba(72, 187, 120, 0.8)'
+                        ],
+                        borderColor: 'white',
+                        borderWidth: 3
+                    }] 
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                font: { size: 12 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        initCharts();
+
+        // Función para inicializar gráficas de padrinos
+        function initPadrinosCharts() {
+            if(!document.getElementById("chartTopPadrinos")) return;
+            new Chart(document.getElementById("chartTopPadrinos"), {
+                type:'bar',
+                data: {
+                    labels:["María","Carlos","Ana","Luis","Sofía"],
+                    datasets:[{label:"Donación ($)", data:[500,400,350,300,250], backgroundColor:["#48bb78","#63b3ed","#ed8936","#f56565","#9f7aea"]}]
+                }
+            });
+            new Chart(document.getElementById("chartTopRefugios"), {
+                type:'bar',
+                data:{
+                    labels:["Esperanza","Huellitas","Manos Amigas"],
+                    datasets:[{label:"Necesidad (%)", data:[90,70,50], backgroundColor:["#f56565","#ed8936","#ecc94b"]}]
+                }
+            });
+            new Chart(document.getElementById("chartTipoDonacion"), {
+                type:'pie',
+                data:{
+                    labels:["Dinero","Artículos","Voluntariado","Apadrinamiento","Recurrente"],
+                    datasets:[{data:[40,25,15,10,10], backgroundColor:["#48bb78","#63b3ed","#ed8936","#f56565","#9f7aea"]}]
+                }
+            });
+            new Chart(document.getElementById("chartTopMascotas"), {
+                type:'doughnut',
+                data:{
+                    labels:["Perros","Gatos","Otros"],
+                    datasets:[{data:[60,30,10], backgroundColor:["#4299e1","#9f7aea","#48bb78"]}]
+                }
+            });
+        }
+
+        // Contenido de fallback para secciones (para evitar errores si no hay partials)
+        const fallbackContent = {
+            apoyos: `
+                <div class="content-card">
+                    <h2 class="content-title">Sección de Apoyos</h2>
+                    <p>Aquí verás los detalles de los apoyos y donaciones. (Placeholder - agrega tu contenido real en /partials/apoyos)</p>
+                    <div class="chart-container">
+                        <canvas id="chartApoyos"></canvas>
+                    </div>
+                </div>
+            `,
+            padrinos: `
+                <div class="content-card">
+                    <h2 class="content-title">Sección de Padrinos</h2>
+                    <p>Lista de padrinos activos y sus contribuciones.</p>
+                    <div class="chart-container">
+                        <canvas id="chartTopPadrinos"></canvas>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <h2 class="content-title">Tipos de Donación</h2>
+                    <div class="chart-container">
+                        <canvas id="chartTipoDonacion"></canvas>
+                    </div>
+                </div>
+            `,
+            mascotas: `
+                <div class="content-card">
+                    <h2 class="content-title">Sección de Mascotas</h2>
+                    <p>Gestión de mascotas en refugios. (Placeholder)</p>
+                </div>
+            `,
+            refugios: `
+                <div class="content-card">
+                    <h2 class="content-title">Sección de Refugios</h2>
+                    <p>Lista de refugios registrados. (Placeholder)</p>
+                </div>
+            `,
+            notificaciones: `
+                <div class="content-card">
+                    <h2 class="content-title">Notificaciones</h2>
+                    <p>Aquí verás tus notificaciones recientes. (Contenido de tu notificaciones.html adaptado como placeholder)</p>
+                    <ul>
+                        <li>✅ Nueva donación recibida</li>
+                        <li>🐶 Mascota adoptada exitosamente</li>
+                        <li>💝 Nuevo padrino registrado</li>
+                    </ul>
+                </div>
+            `
+        };
+
+        // Función para cargar contenido dinámico
+        async function loadContent(section) {
+            try {
+                const response = await fetch(`/partials/${section}`);
+                if(!response.ok) throw new Error("No se pudo cargar el contenido");
+                const html = await response.text();
+                document.getElementById("content-area").innerHTML = html;
+
+                // Inicializar gráficas de padrinos si corresponde
+                if(section === 'padrinos') initPadrinosCharts();
+            } catch(err) {
+                console.error(err);
+                // Usar fallback si no hay partial
+                const fallbackHtml = fallbackContent[section] || `<div class="content-card"><p>Error al cargar el contenido para ${section}. Verifica el archivo /partials/${section}.</p></div>`;
+                document.getElementById("content-area").innerHTML = fallbackHtml;
+
+                // Inicializar gráficas si es padrinos (fallback)
+                if(section === 'padrinos') initPadrinosCharts();
+            }
+        }
+
+        // Evento de los botones del menú
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function(){
+                // Remover active de todos
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                // Agregar active al clickeado
+                this.classList.add('active');
+                
+                const section = this.dataset.file;
+                if(section === 'inicio') {
+                    location.reload(); // Recargar para mostrar el dashboard inicial
+                } else {
+                    loadContent(section);
+                }
+
+                // Cerrar sidebar en móvil
+                if(window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('active');
+                    document.getElementById('overlay').classList.remove('active');
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Notificaciones
+        function loadNotifications() {
+            loadContent('notificaciones');
+        }
+
+        // PWA: botón de instalación
+        let deferredPrompt;
+        const installBtn = document.getElementById('install-btn');
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'inline-block';
+        });
+        installBtn.addEventListener('click', () => {
+            if(deferredPrompt){
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                    installBtn.style.display = 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

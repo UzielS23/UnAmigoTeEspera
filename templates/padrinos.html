@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Padrinos - UnAmigoTeEspera</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 25%, #fef3c7 50%, #ecfdf5 75%, #f3e8ff 100%);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            padding: 2rem;
+            margin: 0;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #1e40af, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #64748b;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: -2.5rem -2.5rem 2rem -2.5rem;
+            text-align: center;
+        }
+
+        .form-header h2 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .checkbox-section {
+            background: rgba(59, 130, 246, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid #3b82f6;
+            margin-bottom: 2rem;
+        }
+
+        .checkbox-label-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: block;
+            color: #1e40af;
+            font-size: 1.1rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-label:hover {
+            transform: translateX(5px);
+        }
+
+        .checkbox-input {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: #3b82f6;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.3rem 2rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(59, 130, 246, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .charts-section {
+            margin-top: 3rem;
+        }
+
+        .section-title-charts {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #1e40af, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .success-message {
+            display: none;
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 600;
+            animation: slideInDown 0.5s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .form-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+
+            .checkbox-group {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content-card {
+                padding: 1.5rem;
+            }
+
+            .form-header {
+                margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+   
+        <!-- Form Card -->
+        <div class="content-card">
+            <div class="form-header">
+                <h2>Formulario de Registro</h2>
+                <p>Completa tus datos para apoyar a nuestros refugios y mascotas</p>
+            </div>
+
+            <form id="form-padrino">
+                <div class="form-grid">
+                    <input 
+                        type="text" 
+                        name="nombre" 
+                        placeholder="👤 Nombre completo" 
+                        required 
+                        class="form-input">
+                    
+                    <select name="sexo" required class="form-select form-input">
+                        <option value="">Selecciona tu sexo</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                    
+                    <input 
+                        type="tel" 
+                        name="telefono" 
+                        placeholder="📞 Teléfono (10 dígitos)" 
+                        required 
+                        class="form-input"
+                        pattern="[0-9]{10}">
+                    
+                    <input 
+                        type="email" 
+                        name="correo" 
+                        placeholder="💌 Correo electrónico" 
+                        required 
+                        class="form-input">
+                    
+                    <select name="refugio" required class="form-select form-input">
+                        <option value="">Selecciona un refugio</option>
+                        <option value="esperanza">🏠 Refugio Esperanza</option>
+                        <option value="huellitas">🐾 Refugio Huellitas</option>
+                        <option value="manosamigas">🤲 Refugio Manos Amigas</option>
+                    </select>
+                    
+                    <select name="tipo_donacion" required class="form-select form-input">
+                        <option value="">Tipo de donación</option>
+                        <option value="dinero">💰 Dinero</option>
+                        <option value="articulos">🎁 Artículos</option>
+                        <option value="recurrente">🔁 Donación recurrente</option>
+                        <option value="voluntariado">🕒 Voluntariado</option>
+                        <option value="apadrinamiento">🐶 Apadrinamiento específico</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-section">
+                    <label class="checkbox-label-title">
+                        ¿Quieres recibir noticias y actualizaciones?
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input 
+                                type="checkbox" 
+                                name="noticias" 
+                                value="si" 
+                                class="checkbox-input"> 
+                            <span>Sí, deseo recibir noticias</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input 
+                                type="checkbox" 
+                                name="noticias" 
+                                value="no" 
+                                class="checkbox-input"> 
+                            <span>No, gracias</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span>✓</span> Enviar Formulario
+                </button>
+            </form>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <h2 class="section-title-charts">Estadísticas de Impacto</h2>
+            
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3 class="chart-title">Top 5 Padrinos</h3>
+                    <div class="chart-container">
+                        <canvas id="chartTopPadrinos"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3 class="chart-title">Top 3 Refugios con más necesidades</h3>
+                    <div class="chart-container">
+                        <canvas id="chartTopRefugios"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3 class="chart-title">Distribución por Tipo de Donación</h3>
+                    <div class="chart-container">
+                        <canvas id="chartTipoDonacion"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3 class="chart-title">Mascotas Apadrinadas</h3>
+                    <div class="chart-container">
+                        <canvas id="chartTopMascotas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Charts
+        function initPadrinosCharts() {
+            // Top 5 Padrinos Chart
+            new Chart(document.getElementById("chartTopPadrinos"), {
+                type: 'bar',
+                data: {
+                    labels: ["María", "Carlos", "Ana", "Luis", "Sofía"],
+                    datasets: [{
+                        label: "Donación ($)",
+                        data: [500, 400, 350, 300, 250],
+                        backgroundColor: [
+                            'rgba(72, 187, 120, 0.8)',
+                            'rgba(99, 179, 237, 0.8)',
+                            'rgba(237, 137, 54, 0.8)',
+                            'rgba(245, 101, 101, 0.8)',
+                            'rgba(159, 122, 234, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(72, 187, 120)',
+                            'rgb(99, 179, 237)',
+                            'rgb(237, 137, 54)',
+                            'rgb(245, 101, 101)',
+                            'rgb(159, 122, 234)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Top 3 Refugios Chart
+            new Chart(document.getElementById("chartTopRefugios"), {
+                type: 'bar',
+                data: {
+                    labels: ["Esperanza", "Huellitas", "Manos Amigas"],
+                    datasets: [{
+                        label: "Nivel de necesidad (%)",
+                        data: [90, 70, 50],
+                        backgroundColor: [
+                            'rgba(245, 101, 101, 0.8)',
+                            'rgba(237, 137, 54, 0.8)',
+                            'rgba(236, 201, 75, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(245, 101, 101)',
+                            'rgb(237, 137, 54)',
+                            'rgb(236, 201, 75)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: true }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    }
+                }
+            });
+
+            // Tipo de Donación Chart (Pie)
+            new Chart(document.getElementById("chartTipoDonacion"), {
+                type: 'pie',
+                data: {
+                    labels: ["Dinero", "Artículos", "Voluntariado", "Apadrinamiento", "Recurrente"],
+                    datasets: [{
+                        data: [40, 25, 15, 10, 10],
+                        backgroundColor: [
+                            'rgba(72, 187, 120, 0.8)',
+                            'rgba(99, 179, 237, 0.8)',
+                            'rgba(237, 137, 54, 0.8)',
+                            'rgba(245, 101, 101, 0.8)',
+                            'rgba(159, 122, 234, 0.8)'
+                        ],
+                        borderColor: 'white',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Top Mascotas Chart (Doughnut)
+            new Chart(document.getElementById("chartTopMascotas"), {
+                type: 'doughnut',
+                data: {
+                    labels: ["Perros", "Gatos", "Otros"],
+                    datasets: [{
+                        data: [60, 30, 10],
+                        backgroundColor: [
+                            'rgba(66, 153, 225, 0.8)',
+                            'rgba(159, 122, 234, 0.8)',
+                            'rgba(72, 187, 120, 0.8)'
+                        ],
+                        borderColor: 'white',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize charts on load
+        initPadrinosCharts();
+
+        // Form submission handler
+        document.getElementById('form-padrino').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show success message
+            const successMsg = document.getElementById('successMessage');
+            successMsg.classList.add('show');
+            
+            // Scroll to success message
+            successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Reset form
+            this.reset();
+            
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 5000);
+        });
+
+        // Checkbox mutual exclusivity
+        const checkboxes = document.querySelectorAll('input[name="noticias"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    checkboxes.forEach(cb => {
+                        if (cb !== this) cb.checked = false;
+                    });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.chart-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

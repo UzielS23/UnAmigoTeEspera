@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones - UnAmigoTeEspera</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 25%, #fef3c7 50%, #ecfdf5 75%, #f3e8ff 100%);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 2rem;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(135deg, #1e40af, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .notifications-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.2rem 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .notifications-count {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .notifications-count span {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .filter-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            color: white;
+            border-color: transparent;
+        }
+
+        .notifications-grid {
+            display: grid;
+            gap: 1.5rem; /* separación entre notificaciones */
+        }
+
+        .notification-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            gap: 1.2rem;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-card.unread {
+            border-left: 4px solid #3b82f6;
+            background: rgba(59, 130, 246, 0.03);
+        }
+
+        .notification-card.unread::before {
+            content: '';
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 10px;
+            height: 10px;
+            background: #3b82f6;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        .notification-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.success { background: linear-gradient(135deg, #10b981, #34d399); }
+        .notification-icon.info { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+        .notification-icon.warning { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+        .notification-icon.error { background: linear-gradient(135deg, #ef4444, #f87171); }
+
+        .notification-content { flex: 1; }
+
+        .notification-title { font-size: 1rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem; }
+
+        .notification-message { font-size: 0.9rem; color: #64748b; line-height: 1.5; margin-bottom: 0.5rem; }
+
+        .notification-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .notification-time { display: flex; align-items: center; gap: 0.3rem; }
+
+        .notification-category {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .notification-actions { display: flex; gap: 0.5rem; align-items: center; }
+
+        .action-btn {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: rgba(0, 0, 0, 0.05);
+            color: #64748b;
+        }
+
+        .action-btn:hover { transform: translateY(-2px); }
+
+        .mark-all-read {
+            padding: 0.6rem 1.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            border: 2px solid rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .mark-all-read:hover {
+            background: rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Notifications Header -->
+        <div class="notifications-header">
+            <div class="notifications-count">
+                Notificaciones <span id="notificationCount">6</span>
+            </div>
+            <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">Todas</button>
+                    <button class="filter-btn" data-filter="unread">No leídas</button>
+                    <button class="filter-btn" data-filter="read">Leídas</button>
+                </div>
+                <button class="mark-all-read" onclick="markAllAsRead()">✓ Marcar todas como leídas</button>
+            </div>
+        </div>
+
+        <!-- Notifications Grid -->
+        <div class="notifications-grid">
+            <!-- Notification 2 -->
+            <div class="notification-card unread" data-type="info">
+                <div class="notification-icon info">💰</div>
+                <div class="notification-content">
+                    <div class="notification-title">Donación recibida</div>
+                    <div class="notification-message">
+                        María López realizó una donación de $500 para el Refugio Esperanza. 
+                        Los fondos se destinarán a tratamiento veterinario.
+                    </div>
+                    <div class="notification-meta">
+                        <span class="notification-time">🕐 Hace 1 hora</span>
+                        <span class="notification-category">Donación</span>
+                    </div>
+                </div>
+                <div class="notification-actions">
+                    <button class="action-btn primary" onclick="viewDetails(2)">Agradecer</button>
+                </div>
+            </div>
+
+            <!-- Notification 3 -->
+            <div class="notification-card unread" data-type="success">
+                <div class="notification-icon success">🤝</div>
+                <div class="notification-content">
+                    <div class="notification-title">Nuevo padrino registrado</div>
+                    <div class="notification-message">
+                        Carlos Ramírez se ha registrado como padrino para Luna. 
+                        Ha seleccionado una donación mensual recurrente.
+                    </div>
+                    <div class="notification-meta">
+                        <span class="notification-time">🕐 Hace 2 horas</span>
+                        <span class="notification-category">Padrino</span>
+                    </div>
+                </div>
+                <div class="notification-actions">
+                    <button class="action-btn primary" onclick="viewDetails(3)">Ver perfil</button>
+                </div>
+            </div>
+
+            <!-- Notification 4 -->
+            <div class="notification-card unread" data-type="warning">
+                <div class="notification-icon warning">⚠️</div>
+                <div class="notification-content">
+                    <div class="notification-title">Revisión veterinaria pendiente</div>
+                    <div class="notification-message">
+                        Chaparro tiene programada su revisión veterinaria para mañana a las 10:00 AM. 
+                        Recuerda confirmar la cita.
+                    </div>
+                    <div class="notification-meta">
+                        <span class="notification-time">🕐 Hace 3 horas</span>
+                        <span class="notification-category">Veterinaria</span>
+                    </div>
+                </div>
+                <div class="notification-actions">
+                    <button class="action-btn primary" onclick="confirmAppointment()">Confirmar</button>
+                    <button class="action-btn secondary" onclick="reschedule()">Reagendar</button>
+                </div>
+            </div>
+
+            <!-- Notification 5 -->
+            <div class="notification-card" data-type="info">
+                <div class="notification-icon info">📊</div>
+                <div class="notification-content">
+                    <div class="notification-title">Reporte mensual disponible</div>
+                    <div class="notification-message">
+                        El reporte de actividades de septiembre ya está listo. 
+                        Revisa las estadísticas de adopciones, donaciones y más.
+                    </div>
+                    <div class="notification-meta">
+                        <span class="notification-time">🕐 Hace 5 horas</span>
+                        <span class="notification-category">Reporte</span>
+                    </div>
+                </div>
+                <div class="notification-actions">
+                    <button class="action-btn primary" onclick="downloadReport()">Descargar</button>
+                </div>
+            </div>
+
+            <!-- Notification 6 -->
+            <div class="notification-card" data-type="success">
+                <div class="notification-icon success">🏡</div>
+                <div class="notification-content">
+                    <div class="notification-title">Nuevo refugio asociado</div>
+                    <div class="notification-message">
+                        El Refugio "Patitas Felices" se ha unido a nuestra red. 
+                        Ahora contamos con 13 refugios colaboradores.
+                    </div>
+                    <div class="notification-meta">
+                        <span class="notification-time">🕐 Ayer</span>
+                        <span class="notification-category">Refugio</span>
+                    </div>
+                </div>
+                <div class="notification-actions">
+                    <button class="action-btn primary" onclick="viewDetails(6)">Conocer más</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function markAllAsRead() {
+            const notifications = document.querySelectorAll('.notification-card.unread');
+            notifications.forEach(n => n.classList.remove('unread'));
+        }
+
+        function viewDetails(id) {
+            alert('Ver detalles de la notificación ' + id);
+        }
+
+        function confirmAppointment() {
+            alert('Cita confirmada');
+        }
+
+        function reschedule() {
+            alert('Reagendar cita');
+        }
+
+        function downloadReport() {
+            alert('Descargando reporte...');
+        }
+    </script>
+</body>
+</html>
