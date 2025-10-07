@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - UnAmigoTeEspera.com</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+      <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
@@ -741,27 +743,178 @@
         }
 
         // Evento de los botones del menú
-        document.querySelectorAll('.sidebar-link').forEach(link => {
-            link.addEventListener('click', function(){
-                // Remover active de todos
-                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-                // Agregar active al clickeado
-                this.classList.add('active');
-                
-                const section = this.dataset.file;
-                if(section === 'inicio') {
-                    location.reload(); // Recargar para mostrar el dashboard inicial
-                } else {
-                    loadContent(section);
-                }
+        // Evento de los botones del menú
+document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.addEventListener('click', function(){
+        document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
 
-                // Cerrar sidebar en móvil
-                if(window.innerWidth <= 1024) {
-                    document.getElementById('sidebar').classList.remove('active');
-                    document.getElementById('overlay').classList.remove('active');
+        const section = this.dataset.file;
+
+        if(section === 'inicio'){
+            location.reload();
+        } else if(section === 'apoyos'){
+            fetch('/apoyos')
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById("content-area").innerHTML = html;
+
+                    // Ejecutar scripts de apoyos.html después de inyectarlo
+                    initApoyosScripts();
+                })
+                .catch(err => console.error('Error cargando Apoyos:', err));
+        } else {
+            loadContent(section);
+        }
+
+        if(window.innerWidth <= 1024){
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+    });
+});
+
+
+// Función que se llama después de cargar dinámicamente el módulo de Apoyos
+function initApoyosScripts() {
+    const form = document.getElementById('apoyoForm');
+    if(!form) return; // Por seguridad, si no existe el form, salir
+
+    let graficaRefugios, graficaTiempo;
+
+    // Mensajes flash
+    function showFlashMessage(message, color = 'green') {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `
+            max-w-3xl mx-auto mt-6 
+            bg-${color}-100 border border-${color}-300 text-${color}-800 
+            p-4 rounded-lg shadow text-center transition-all duration-700
+        `;
+        msgDiv.textContent = message;
+        form.insertAdjacentElement('afterend', msgDiv);
+        setTimeout(() => { msgDiv.classList.add('opacity-0'); setTimeout(() => msgDiv.remove(), 700); }, 5000);
+    }
+
+    // Funciones de gráficas
+    function cargarGraficaRefugios() {
+        const ctx = document.getElementById('graficaRefugiosPie');
+        if(!ctx) return;
+        fetch('/grafica_refugios')
+            .then(res => res.json())
+            .then(data => {
+                const labels = data.map(d => d.refugio);
+                const totals = data.map(d => d.total);
+                const colors = ['#6366F1','#F59E0B','#10B981','#EF4444','#3B82F6','#8B5CF6','#F43F5E','#22D3EE','#FACC15','#EC4899'];
+                if(graficaRefugios) graficaRefugios.destroy();
+                graficaRefugios = new Chart(ctx.getContext('2d'), {
+                    type: 'pie',
+                    data: { labels, datasets:[{ data: totals, backgroundColor: colors, borderColor:'#fff', borderWidth:2 }] },
+                    options: { responsive:true, plugins:{ legend:{position:'right'}, tooltip:{callbacks:{label:ctx => `${ctx.label}: $${ctx.formattedValue}`}}} }
+                });
+            }).catch(console.error);
+    }
+
+    function cargarGraficaTiempo() {
+        const ctx = document.getElementById('graficaTiempoLine');
+        if(!ctx) return;
+        fetch('/grafica_tiempo')
+            .then(res => res.json())
+            .then(data => {
+                const labels = data.map(d => d.mes);
+                const totals = data.map(d => d.total);
+                if(graficaTiempo) graficaTiempo.destroy();
+                graficaTiempo = new Chart(ctx.getContext('2d'), {
+                    type:'line',
+                    data:{ labels, datasets:[{ label:'Total apoyos', data:totals, fill:true, backgroundColor:'rgba(99,102,241,0.2)', borderColor:'#6366F1', tension:0.4, pointRadius:5, pointBackgroundColor:'#6366F1' }]},
+                    options:{ responsive:true, plugins:{ legend:{display:true, position:'top'} }, scales:{ y:{beginAtZero:true} } }
+                });
+            }).catch(console.error);
+    }
+
+    // Enviar formulario
+    form.addEventListener('submit', e=>{
+        e.preventDefault();
+        const idApoyo = document.getElementById('idApoyo').value;
+        const url = idApoyo ? `/editar_apoyo/${idApoyo}` : '/registrar_apoyo';
+        const formData = new FormData(form);
+        fetch(url, { method:'POST', body:formData })
+            .then(res => res.json())
+            .then(data => {
+                showFlashMessage(data.message, data.success ? 'green' : 'red');
+                if(data.success) {
+                    form.reset();
+                    document.getElementById('idApoyo').value = '';
+                    document.getElementById('btnRegistrar').classList.remove('hidden');
+                    document.getElementById('btnEditar').classList.add('hidden');
+                    document.getElementById('btnCancelar').classList.add('hidden');
+                    refreshApoyos();
                 }
-            });
-        });
+            }).catch(err => { console.error(err); showFlashMessage('Error de conexión', 'red'); });
+    });
+
+    document.getElementById('btnCancelar').addEventListener('click', ()=>{
+        form.reset();
+        document.getElementById('idApoyo').value = '';
+        document.getElementById('btnRegistrar').classList.remove('hidden');
+        document.getElementById('btnEditar').classList.add('hidden');
+        document.getElementById('btnCancelar').classList.add('hidden');
+    });
+
+    // Editar/Eliminar
+    window.editarApoyo = function(card){
+        document.getElementById('idApoyo').value = card.dataset.id;
+        document.getElementById('idMascota').value = card.dataset.idmascota;
+        document.getElementById('idPadrino').value = card.dataset.idpadrino;
+        document.getElementById('idRefugio').value = card.dataset.idrefugio;
+        document.getElementById('monto').value = card.dataset.monto;
+        document.getElementById('causa').value = card.dataset.causa;
+        document.getElementById('fechaApoyo').value = card.dataset.fecha;
+        document.getElementById('btnRegistrar').classList.add('hidden');
+        document.getElementById('btnEditar').classList.remove('hidden');
+        document.getElementById('btnCancelar').classList.remove('hidden');
+        form.scrollIntoView({ behavior:'smooth' });
+    }
+
+    window.eliminarApoyo = function(id){
+        if(!confirm('¿Deseas eliminar este apoyo?')) return;
+        fetch(`/eliminar_apoyo/${id}`, { method:'POST' })
+            .then(res=>res.json())
+            .then(data=>{
+                showFlashMessage(data.message, data.success ? 'green' : 'red');
+                if(data.success) refreshApoyos();
+            }).catch(err=>{console.error(err); showFlashMessage('Error de conexión','red');});
+    }
+
+    function refreshApoyos() {
+        fetch('/partials/apoyos').then(res=>res.text())
+            .then(html=>{
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html,'text/html');
+                const nuevosApoyos = doc.querySelector('.max-w-4xl');
+                const contenedor = document.querySelector('.max-w-4xl');
+                if(contenedor && nuevosApoyos) contenedor.innerHTML = nuevosApoyos.innerHTML;
+
+                document.querySelectorAll('[onclick^="editarApoyo"]').forEach(card => {
+                    card.onclick = ()=>editarApoyo(card);
+                });
+
+                document.querySelectorAll('.text-red-600').forEach(link => {
+                    link.onclick = e=>{
+                        e.preventDefault();
+                        const id = link.href.split('/').pop();
+                        eliminarApoyo(id);
+                    };
+                });
+
+                cargarGraficaRefugios();
+                cargarGraficaTiempo();
+            }).catch(console.error);
+    }
+
+    // Inicializar gráficas
+    cargarGraficaRefugios();
+    cargarGraficaTiempo();
+}
 
         // Mobile menu toggle
         const menuToggle = document.getElementById('menuToggle');
