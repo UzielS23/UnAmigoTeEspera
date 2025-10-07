@@ -1244,8 +1244,7 @@
                 <a href="#mascotas" class="nav-link">Adopta</a>
                 <a href="login.html" class="btn btn-outline">Ingresar</a>
                 <a href="registro.html" class="btn btn-primary">Registrarse</a>
-<a href="{{ url_for('dashboard_graficas') }}" class="btn btn-primary">Dashboard</a>
-
+                <a href="{{ url_for('dashboard_graficas') }}" class="btn btn-primary">Dashboard</a>
             </div>
 
             <div class="mobile-menu-toggle">
@@ -1768,4 +1767,61 @@
         }
     </script>
 </body>
-</html>
+</html con este diseño usalo para cambiar este codigo <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Un Amigo Te Espera</title>
+  <link rel="stylesheet" href="/static/css/tailwind.min.css">
+</head>
+<body class="flex h-screen bg-gray-100">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gray-800 text-white flex flex-col">
+    <div class="p-4 text-2xl font-bold border-b border-gray-700">
+      Dashboard
+    </div>
+    <nav class="flex-1 p-4 space-y-2">
+      <button onclick="loadContent('home')" class="w-full text-left px-3 py-2 rounded hover:bg-gray-700">🏠 Inicio</button>
+      <button onclick="loadContent('animales')" class="w-full text-left px-3 py-2 rounded hover:bg-gray-700">🐶 Animales</button>
+      <button onclick="loadContent('apadrinar')" class="w-full text-left px-3 py-2 rounded hover:bg-gray-700">🤝 Apadrinar</button>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <div class="flex-1 flex flex-col">
+
+    <!-- Top bar -->
+    <header class="bg-white shadow p-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold">Panel de Control</h1>
+      <div class="flex items-center space-x-4">
+        <button class="px-4 py-2 bg-yellow-500 rounded hover:bg-yellow-600">🔔 Notificaciones</button>
+        <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">🔑 Iniciar Sesión</button>
+      </div>
+    </header>
+
+    <!-- Dynamic Content -->
+    <main id="content-area" class="p-6 flex-1 overflow-y-auto">
+      <h2 class="text-2xl font-bold mb-4">Bienvenido al Dashboard</h2>
+      <p>Selecciona una opción del menú lateral para ver contenido aquí.</p>
+    </main>
+
+  </div>
+
+  <script>
+    function loadContent(section) {
+      let content = "";
+      if (section === "home") {
+        content = "<h2 class='text-2xl font-bold mb-4'>Inicio</h2><p>Bienvenido al panel de inicio.</p>";
+      } else if (section === "animales") {
+        content = "<h2 class='text-2xl font-bold mb-4'>Animales</h2><p>Aquí verás la lista de animales.</p>";
+      } else if (section === "apadrinar") {
+        content = "<h2 class='text-2xl font-bold mb-4'>Apadrinar</h2><p>Aquí podrás gestionar los apadrinamientos.</p>";
+      }
+      document.getElementById("content-area").innerHTML = content;
+    }
+  </script>
+
+</body>
+</html
