@@ -763,6 +763,15 @@ document.querySelectorAll('.sidebar-link').forEach(link => {
                     initApoyosScripts();
                 })
                 .catch(err => console.error('Error cargando Apoyos:', err));
+        } else if(section === 'refugios'){
+            // Cargar la página estática de refugios (templates/refugios.html)
+            fetch('/refugios')
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById("content-area").innerHTML = html;
+                    // No hay scripts extra necesarios para la versión estática
+                })
+                .catch(err => console.error('Error cargando Refugios:', err));
         } else {
             loadContent(section);
         }
