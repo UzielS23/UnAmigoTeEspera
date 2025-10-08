@@ -671,55 +671,56 @@
         }
 
         // Contenido de fallback para secciones (para evitar errores si no hay partials)
-        const fallbackContent = {
-            apoyos: `
-                <div class="content-card">
-                    <h2 class="content-title">Sección de Apoyos</h2>
-                    <p>Aquí verás los detalles de los apoyos y donaciones. (Placeholder - agrega tu contenido real en /partials/apoyos)</p>
-                    <div class="chart-container">
-                        <canvas id="chartApoyos"></canvas>
-                    </div>
-                </div>
-            `,
-            padrinos: `
-                <div class="content-card">
-                    <h2 class="content-title">Sección de Padrinos</h2>
-                    <p>Lista de padrinos activos y sus contribuciones.</p>
-                    <div class="chart-container">
-                        <canvas id="chartTopPadrinos"></canvas>
-                    </div>
-                </div>
-                <div class="content-card">
-                    <h2 class="content-title">Tipos de Donación</h2>
-                    <div class="chart-container">
-                        <canvas id="chartTipoDonacion"></canvas>
-                    </div>
-                </div>
-            `,
-            mascotas: `
-                <div class="content-card">
-                    <h2 class="content-title">Sección de Mascotas</h2>
-                    <p>Gestión de mascotas en refugios. (Placeholder)</p>
-                </div>
-            `,
-            refugios: `
-                <div class="content-card">
-                    <h2 class="content-title">Sección de Refugios</h2>
-                    <p>Lista de refugios registrados. (Placeholder)</p>
-                </div>
-            `,
-            notificaciones: `
-                <div class="content-card">
-                    <h2 class="content-title">Notificaciones</h2>
-                    <p>Aquí verás tus notificaciones recientes. (Contenido de tu notificaciones.html adaptado como placeholder)</p>
-                    <ul>
-                        <li>✅ Nueva donación recibida</li>
-                        <li>🐶 Mascota adoptada exitosamente</li>
-                        <li>💝 Nuevo padrino registrado</li>
-                    </ul>
-                </div>
-            `
-        };
+
+const fallbackContent = {
+    apoyos: `
+        <div class="content-card">
+            <h2 class="content-title">Sección de Apoyos</h2>
+            <p>Aquí verás los detalles de los apoyos y donaciones. (Placeholder - agrega tu contenido real en /partials/apoyos)</p>
+            <div class="chart-container">
+                <canvas id="chartApoyos"></canvas>
+            </div>
+        </div>
+    `,
+    padrinos: `
+        <div class="content-card">
+            <h2 class="content-title">Sección de Padrinos</h2>
+            <p>Lista de padrinos activos y sus contribuciones.</p>
+            <div class="chart-container">
+                <canvas id="chartTopPadrinos"></canvas>
+            </div>
+        </div>
+        <div class="content-card">
+            <h2 class="content-title">Tipos de Donación</h2>
+            <div class="chart-container">
+                <canvas id="chartTipoDonacion"></canvas>
+            </div>
+        </div>
+    `,
+    mascotas: `
+        <div class="content-card">
+            <h2 class="content-title">Sección de Mascotas</h2>
+            <p>Gestión de mascotas en refugios.</p>
+        </div>
+    `,
+    refugios: `
+        <div class="content-card">
+            <h2 class="content-title">Sección de Refugios</h2>
+            <p>Lista de refugios registrados. (Placeholder)</p>
+        </div>
+    `,
+    notificaciones: `
+        <div class="content-card">
+            <h2 class="content-title">Notificaciones</h2>
+            <p>Aquí verás tus notificaciones recientes. (Contenido de tu notificaciones.html adaptado como placeholder)</p>
+            <ul>
+                <li>✅ Nueva donación recibida</li>
+                <li>🐶 Mascota adoptada exitosamente</li>
+                <li>💝 Nuevo padrino registrado</li>
+            </ul>
+        </div>
+    `
+};
 
         // Función para cargar contenido dinámico
         async function loadContent(section) {
