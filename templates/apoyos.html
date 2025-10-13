@@ -13,13 +13,7 @@
     Visualiza y administra los apoyos brindados a las mascotas, padrinos y refugios de forma eficiente y clara.
   </p>
 
-  <!-- Gráficas -->
-
-
-  <!-- Contenedor de gráficas lado a lado -->
-<!-- Contenedor de gráficas lado a lado -->
-<!-- Contenedor de gráficas lado a lado -->
-<!-- Contenedor de gráficas lado a lado -->
+ 
 <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
   
   <!-- Gráfica 1 (pastel más pequeña) -->
@@ -41,6 +35,17 @@
   </div>
 
 </div>
+<script>
+if (navigator.serviceWorker) {
+    navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data && event.data.type === 'RESOURCE_UPDATED') {
+            console.log('Recurso actualizado desde SW:', event.data.url);
+
+           
+        }
+    });
+}
+</script>
 
 
   <!-- Mensaje de Flask -->

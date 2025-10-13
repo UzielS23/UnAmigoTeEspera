@@ -22,6 +22,10 @@ def index():
 def login():
     return render_template('login.html')
 
+@app.route('/offline')
+def offline():
+    return render_template('offline.html')
+
 @app.route('/dashboard-graficas')
 def dashboard_graficas():
     return render_template('dashboardgraficas.html')

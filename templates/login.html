@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UnAmigoTeEspera.com - Iniciar Sesión</title>
     <link rel="icon" href="{{ url_for('static', filename='img/logo.png') }}">
+      
+    <link rel="manifest" href="/manifest.json">
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
@@ -647,13 +650,12 @@
     </style>
 </head>
 <body>
-    <!-- Patrón de fondo sutil -->
+   
     <div class="background-pattern"></div>
 
-    <!-- Panel izquierdo - Hero Section -->
     <div class="left-panel">
         <div class="hero-content">
-            <!-- Logo principal - Aquí puedes poner la URL de tu logo -->
+          
             <div class="main-logo">
                 <img src="../static/img/logo.png" alt="UnAmigoTeEspera.com Logo" id="mainLogoImg">
             </div>
@@ -663,7 +665,7 @@
                 Conectamos corazones con patitas. Cada adopción es una segunda oportunidad para crear una historia de amor incondicional.
             </p>
             
-            <!-- Características originales recuperadas -->
+           
             <div class="hero-features">
                 <div class="feature-item">🏠 Adopción Responsable</div>
                 <div class="feature-item">💕 Amor Garantizado</div>
@@ -672,10 +674,10 @@
         </div>
     </div>
 
-    <!-- Panel derecho - Formulario -->
+ 
     <div class="right-panel">
         <div class="login-container">
-            <!-- Logo pequeño del formulario -->
+       
             <div class="form-logo">
                 <img src="../static/img/logo.png" alt="Logo" id="formLogoImg">
             </div>
@@ -685,11 +687,11 @@
                 <p class="form-subtitle">Inicia sesión para continuar ayudando a cambiar vidas</p>
             </div>
 
-            <!-- Mensajes de estado -->
+           
             <div id="messageContainer"></div>
 
 
-            <!-- Formulario principal -->
+          
             <form class="login-form" onsubmit="return handleSubmit(event)" id="mainForm" novalidate method="post" action="/login">
                 <div class="form-group">
                     <label class="form-label" for="email">Correo Electrónico</label>
