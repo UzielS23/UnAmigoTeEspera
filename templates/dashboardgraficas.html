@@ -767,12 +767,39 @@ document.querySelectorAll('.sidebar-link').forEach(link => {
                 })
                 .catch(err => console.error('Error cargando Apoyos:', err));
         } else if(section === 'refugios'){
-            // Cargar la página estática de refugios (templates/refugios.html)
+            // Cargar la página parcial de refugios y asegurar inicialización del módulo
             fetch('/refugios')
                 .then(res => res.text())
                 .then(html => {
-                    document.getElementById("content-area").innerHTML = html;
-                    // No hay scripts extra necesarios para la versión estática
+                    const content = document.getElementById("content-area");
+                    content.innerHTML = html;
+
+                    // Eliminar cualquier <script src="/static/js/refugios.js"> que haya sido inyectado vía innerHTML
+                    // Los scripts añadidos por innerHTML no se ejecutan, y pueden hacer que la comprobación posterior falle.
+                    content.querySelectorAll('script[src="/static/js/refugios.js"]').forEach(s => s.remove());
+
+                    // Si initRefugios no está disponible, cargar el script y ejecutarlo al terminar.
+                    if(typeof window.initRefugios !== 'function'){
+                        // Evitar duplicar cargas: marcar el script con id
+                        if(!document.querySelector('script#refugios-js')){
+                            const s = document.createElement('script');
+                            s.id = 'refugios-js';
+                            s.src = '/static/js/refugios.js';
+                            s.defer = true;
+                            s.onload = () => { if(window.initRefugios) window.initRefugios(); }
+                            document.body.appendChild(s);
+                        } else {
+                            // Si existe el tag pero no se ejecutó, forzar otra carga para asegurar ejecución
+                            const s = document.createElement('script');
+                            s.src = '/static/js/refugios.js';
+                            s.defer = true;
+                            s.onload = () => { if(window.initRefugios) window.initRefugios(); }
+                            document.body.appendChild(s);
+                        }
+                    } else {
+                        // Ya está cargado y ejecutable
+                        window.initRefugios();
+                    }
                 })
                 .catch(err => console.error('Error cargando Refugios:', err));
         } else {

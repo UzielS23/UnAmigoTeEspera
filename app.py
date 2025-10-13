@@ -225,6 +225,67 @@ def lista_apoyos():
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
+@app.route('/api/refugios/<int:idRefugio>/force_delete', methods=['POST'])
+def api_force_delete_refugio(idRefugio):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+        # obtener ids de mascotas del refugio
+        cursor.execute("SELECT idMascota FROM mascotas WHERE idRefugio = %s", (idRefugio,))
+        filas = cursor.fetchall()
+        mascota_ids = [r[0] for r in filas]
+
+        # borrar apoyos que referencian directamente el refugio
+        cursor.execute("DELETE FROM apoyos WHERE idRefugio = %s", (idRefugio,))
+
+        # borrar apoyos que referencian a las mascotas de ese refugio
+        if mascota_ids:
+            placeholders = ','.join(['%s'] * len(mascota_ids))
+            cursor.execute(f"DELETE FROM apoyos WHERE idMascota IN ({placeholders})", tuple(mascota_ids))
+
+            # borrar adopciones relacionadas a esas mascotas
+            cursor.execute(f"DELETE FROM adopciones WHERE idMascota IN ({placeholders})", tuple(mascota_ids))
+
+            # borrar las mascotas
+            cursor.execute(f"DELETE FROM mascotas WHERE idMascota IN ({placeholders})", tuple(mascota_ids))
+
+        # finalmente borrar el refugio
+        cursor.execute("DELETE FROM refugios WHERE idRefugio = %s", (idRefugio,))
+
+        db.commit()
+        cursor.close()
+        db.close()
+        return jsonify({'success': True, 'message': 'Refugio y datos relacionados eliminados'})
+    except Error as e:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        try:
+            cursor.close()
+        except Exception:
+            pass
+        try:
+            db.close()
+        except Exception:
+            pass
+        return jsonify({'success': False, 'message': str(e)}), 500
+    except Exception as e:
+        try:
+            db.rollback()
+        except Exception:
+            pass
+        try:
+            cursor.close()
+        except Exception:
+            pass
+        try:
+            db.close()
+        except Exception:
+            pass
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
 @app.route('/partials/apoyos')
 def partial_apoyos():
     try:
@@ -270,6 +331,178 @@ def mascotas():
 def refugios():
     return render_template("refugios.html")
 
+
+# API: listado de refugios (JSON)
+@app.route('/api/refugios', methods=['GET'])
+def api_list_refugios():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT idRefugio, nombre, direccion, telefono, correoElectronico, capacidad, fechaFundacion, descripcion FROM refugios ORDER BY idRefugio DESC")
+        rows = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return jsonify(rows)
+    except Error as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# API: crear refugio
+@app.route('/api/refugios', methods=['POST'])
+def api_create_refugio():
+    try:
+        data = request.get_json() or {}
+        nombre = data.get('nombre')
+        direccion = data.get('direccion')
+        telefono = data.get('telefono')
+        correo = data.get('correoElectronico')
+        capacidad = data.get('capacidad')
+        fecha = data.get('fechaFundacion')
+        descripcion = data.get('descripcion')
+
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO refugios (nombre, direccion, telefono, correoElectronico, capacidad, fechaFundacion, descripcion)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (nombre, direccion, telefono or None, correo, capacidad or None, fecha or None, descripcion))
+        db.commit()
+        new_id = cursor.lastrowid
+        cursor.close()
+        db.close()
+        return jsonify({'success': True, 'message': 'Refugio creado', 'idRefugio': new_id})
+    except Error as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# API: actualizar refugio
+@app.route('/api/refugios/<int:idRefugio>', methods=['PUT'])
+def api_update_refugio(idRefugio):
+    try:
+        data = request.get_json() or {}
+        nombre = data.get('nombre')
+        direccion = data.get('direccion')
+        telefono = data.get('telefono')
+        correo = data.get('correoElectronico')
+        capacidad = data.get('capacidad')
+        fecha = data.get('fechaFundacion')
+        descripcion = data.get('descripcion')
+
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("""
+            UPDATE refugios
+            SET nombre=%s, direccion=%s, telefono=%s, correoElectronico=%s, capacidad=%s, fechaFundacion=%s, descripcion=%s
+            WHERE idRefugio=%s
+        """, (nombre, direccion, telefono or None, correo, capacidad or None, fecha or None, descripcion, idRefugio))
+        db.commit()
+        cursor.close()
+        db.close()
+        return jsonify({'success': True, 'message': 'Refugio actualizado'})
+    except Error as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# API: eliminar refugio
+@app.route('/api/refugios/<int:idRefugio>', methods=['DELETE'])
+def api_delete_refugio(idRefugio):
+    try:
+        force = request.args.get('force', '0')
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        if force and force.lower() in ('1', 'true'):
+            # Borrar apoyos relacionados explícitamente antes de borrar el refugio.
+            # Además, borrar apoyos asociados a mascotas del refugio y las mascotas y adopciones relacionadas.
+            try:
+                # obtener ids de mascotas del refugio
+                cursor.execute("SELECT idMascota FROM mascotas WHERE idRefugio = %s", (idRefugio,))
+                filas = cursor.fetchall()
+                mascota_ids = [r[0] for r in filas]
+
+                # borrar apoyos que referencian directamente el refugio
+                cursor.execute("DELETE FROM apoyos WHERE idRefugio = %s", (idRefugio,))
+
+                # borrar apoyos que referencian a las mascotas de ese refugio
+                if mascota_ids:
+                    placeholders = ','.join(['%s'] * len(mascota_ids))
+                    cursor.execute(f"DELETE FROM apoyos WHERE idMascota IN ({placeholders})", tuple(mascota_ids))
+
+                    # borrar adopciones relacionadas a esas mascotas
+                    cursor.execute(f"DELETE FROM adopciones WHERE idMascota IN ({placeholders})", tuple(mascota_ids))
+
+                    # borrar las mascotas
+                    cursor.execute(f"DELETE FROM mascotas WHERE idMascota IN ({placeholders})", tuple(mascota_ids))
+
+                # finalmente borrar el refugio
+                cursor.execute("DELETE FROM refugios WHERE idRefugio = %s", (idRefugio,))
+
+                db.commit()
+                cursor.close()
+                db.close()
+                return jsonify({'success': True, 'message': 'Refugio y datos relacionados eliminados'})
+            except Exception as ex:
+                db.rollback()
+                try:
+                    cursor.close()
+                except Exception:
+                    pass
+                try:
+                    db.close()
+                except Exception:
+                    pass
+                return jsonify({'success': False, 'message': str(ex)}), 500
+
+        # Intento de borrado normal
+        cursor.execute("DELETE FROM refugios WHERE idRefugio = %s", (idRefugio,))
+        db.commit()
+        cursor.close()
+        db.close()
+        return jsonify({'success': True, 'message': 'Refugio eliminado'})
+    except Error as e:
+        # Código de MySQL para foreign key constraint failure es 1451
+        try:
+            err_no = getattr(e, 'errno', None)
+        except Exception:
+            err_no = None
+        if err_no == 1451:
+                # Indicar al frontend que existen dependencias. Calculamos recuentos para mostrar detalle.
+                try:
+                    # contar apoyos directamente vinculados por idRefugio
+                    cursor.execute("SELECT COUNT(*) FROM apoyos WHERE idRefugio = %s", (idRefugio,))
+                    apoyos_directos = cursor.fetchone()[0]
+                    # contar mascotas del refugio
+                    cursor.execute("SELECT idMascota FROM mascotas WHERE idRefugio = %s", (idRefugio,))
+                    filas = cursor.fetchall()
+                    mascota_ids = [r[0] for r in filas]
+                    mascotas_count = len(mascota_ids)
+                    apoyos_por_mascota = 0
+                    if mascota_ids:
+                        placeholders = ','.join(['%s'] * len(mascota_ids))
+                        cursor.execute(f"SELECT COUNT(*) FROM apoyos WHERE idMascota IN ({placeholders})", tuple(mascota_ids))
+                        apoyos_por_mascota = cursor.fetchone()[0]
+                    total_apoyos = apoyos_directos + apoyos_por_mascota
+                except Exception:
+                    total_apoyos = None
+                    mascotas_count = None
+                try:
+                    cursor.close()
+                except Exception:
+                    pass
+                try:
+                    db.close()
+                except Exception:
+                    pass
+                info = {'success': False, 'code': 'fk_dependency', 'message': 'Existen dependencias relacionadas con este refugio.', 'dependentCounts': {'apoyos': total_apoyos, 'mascotas': mascotas_count}}
+                return jsonify(info), 409
+        return jsonify({'success': False, 'message': str(e)}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 @app.route("/notificaciones")
 def notificaciones():
     return render_template("notificaciones.html")
@@ -277,9 +510,6 @@ def notificaciones():
 @app.route("/partials/<name>")
 def partials(name):
     return render_template(f"{name}.html")
-
-
-
 
 if __name__ == '__main__':
     # Cambiado para acceder desde otros dispositivos en la misma red
