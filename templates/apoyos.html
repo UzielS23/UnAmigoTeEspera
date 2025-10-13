@@ -13,13 +13,7 @@
     Visualiza y administra los apoyos brindados a las mascotas, padrinos y refugios de forma eficiente y clara.
   </p>
 
-  <!-- Gráficas -->
-
-
-  <!-- Contenedor de gráficas lado a lado -->
-<!-- Contenedor de gráficas lado a lado -->
-<!-- Contenedor de gráficas lado a lado -->
-<!-- Contenedor de gráficas lado a lado -->
+ 
 <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
   
   <!-- Gráfica 1 (pastel más pequeña) -->
@@ -41,6 +35,17 @@
   </div>
 
 </div>
+<script>
+if (navigator.serviceWorker) {
+    navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data && event.data.type === 'RESOURCE_UPDATED') {
+            console.log('Recurso actualizado desde SW:', event.data.url);
+
+           
+        }
+    });
+}
+</script>
 
 
   <!-- Mensaje de Flask -->
@@ -53,65 +58,133 @@
   {% endwith %}
 
   <!-- Formulario de registro/edición -->
-  <div class="max-w-3xl mx-auto mb-10">
-    <form id="apoyoForm" method="POST" class="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-      <h3 class="text-3xl font-bold text-gray-800 text-center mb-8">Registrar/Editar Apoyo</h3>
-      <input type="hidden" name="idApoyo" id="idApoyo">
+<div class="max-w-3xl mx-auto mb-10">
+  <form id="apoyoForm" method="POST" 
+        class="bg-gradient-to-b from-white via-gray-100 to-white rounded-2xl shadow-2xl p-8 space-y-6 border border-gray-200">
+    <h3 class="text-3xl font-bold text-gray-800 text-center mb-6">Registrar/Editar Apoyo</h3>
+    <input type="hidden" name="idApoyo" id="idApoyo">
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="font-semibold text-gray-700">Mascota</label>
-          <select name="idMascota" id="idMascota" required class="w-full border rounded-xl p-2 mt-1">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Mascota -->
+      <div>
+        <label class="font-semibold text-gray-700">Mascota</label>
+        <div class="relative mt-1">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <span class="text-xl">🐾</span>
+          </div>
+          <select name="idMascota" id="idMascota" required
+            class="w-full border rounded-xl pl-10 pr-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition">
             <option value="">Selecciona una mascota</option>
             {% for m in mascotas %}
               <option value="{{ m.idMascota|string }}">{{ m.nombre }}</option>
             {% endfor %}
           </select>
         </div>
+      </div>
 
-        <div>
-          <label class="font-semibold text-gray-700">Padrino</label>
-          <select name="idPadrino" id="idPadrino" required class="w-full border rounded-xl p-2 mt-1">
+      <!-- Padrino -->
+      <div>
+        <label class="font-semibold text-gray-700">Padrino</label>
+        <div class="relative mt-1">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <span class="text-xl">👤</span>
+          </div>
+          <select name="idPadrino" id="idPadrino" required
+            class="w-full border rounded-xl pl-10 pr-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition">
             <option value="">Selecciona un padrino</option>
             {% for p in padrinos %}
               <option value="{{ p.idPadrino|string }}">{{ p.nombrePadrino }}</option>
             {% endfor %}
           </select>
         </div>
+      </div>
 
-        <div>
-          <label class="font-semibold text-gray-700">Refugio</label>
-          <select name="idRefugio" id="idRefugio" required class="w-full border rounded-xl p-2 mt-1">
+      <!-- Refugio -->
+      <div>
+        <label class="font-semibold text-gray-700">Refugio</label>
+        <div class="relative mt-1">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <span class="text-xl">🏠</span>
+          </div>
+          <select name="idRefugio" id="idRefugio" required
+            class="w-full border rounded-xl pl-10 pr-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition">
             <option value="">Selecciona un refugio</option>
             {% for r in refugios %}
               <option value="{{ r.idRefugio|string }}">{{ r.nombre }}</option>
             {% endfor %}
           </select>
         </div>
+      </div>
 
-        <div>
-          <label class="font-semibold text-gray-700">Monto</label>
-          <input type="number" name="monto" id="monto" required class="w-full border rounded-xl p-2 mt-1" placeholder="$500.00">
-        </div>
-
-        <div class="md:col-span-2">
-          <label class="font-semibold text-gray-700">Causa</label>
-          <textarea name="causa" id="causa" rows="3" class="w-full border rounded-xl p-2 mt-1" placeholder="Motivo del apoyo"></textarea>
-        </div>
-
-        <div>
-          <label class="font-semibold text-gray-700">Fecha del Apoyo</label>
-          <input type="date" name="fechaApoyo" id="fechaApoyo" required class="w-full border rounded-xl p-2 mt-1">
+      <!-- Monto -->
+      <div>
+        <label class="font-semibold text-gray-700">Monto</label>
+        <div class="relative mt-1">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <span class="text-gray-500 text-lg">$</span>
+          </div>
+          <input type="number" name="monto" id="monto" required
+            class="w-full border rounded-xl pl-10 pr-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition"
+            placeholder="500.00">
         </div>
       </div>
 
-      <div class="flex justify-end space-x-2">
-        <button type="submit" id="btnRegistrar" class="bg-indigo-600 text-white px-6 py-2 rounded-xl hover:bg-indigo-700 transition">Registrar</button>
-        <button type="submit" id="btnEditar" class="bg-yellow-500 text-white px-6 py-2 rounded-xl hover:bg-yellow-600 transition hidden">Editar</button>
-        <button type="button" id="btnCancelar" class="bg-gray-400 text-white px-6 py-2 rounded-xl hover:bg-gray-500 transition hidden">Cancelar</button>
+      <!-- Causa -->
+      <div class="md:col-span-2">
+        <label class="font-semibold text-gray-700">Causa</label>
+        <div class="relative mt-1">
+          <div class="absolute top-2 left-0 flex items-start pl-3 pointer-events-none">
+            <span class="text-gray-500 text-lg mt-1">📝</span>
+          </div>
+          <textarea name="causa" id="causa" rows="3"
+            class="w-full border rounded-xl pl-10 pr-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition"
+            placeholder="Motivo del apoyo"></textarea>
+        </div>
       </div>
-    </form>
-  </div>
+
+      <!-- Fecha -->
+      <div>
+        <label class="font-semibold text-gray-700">Fecha del Apoyo</label>
+        <div class="relative mt-1">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <span class="text-gray-500 text-lg">📅</span>
+          </div>
+          <input type="date" name="fechaApoyo" id="fechaApoyo" required
+            class="w-full border rounded-xl pl-10 pr-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition">
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-end space-x-4 pt-6">
+      <button type="submit" id="btnRegistrar"
+        class="bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 text-white 
+               px-10 py-3 text-lg font-semibold rounded-2xl shadow-lg 
+               hover:shadow-2xl hover:from-blue-600 hover:via-indigo-600 hover:to-indigo-700 
+               transition-all duration-300 transform hover:-translate-y-0.5">
+        Registrar
+      </button>
+
+      <button type="submit" id="btnEditar"
+        class="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white 
+               px-8 py-3 text-lg font-semibold rounded-2xl shadow-md 
+               hover:shadow-xl hover:from-yellow-500 hover:to-yellow-600 
+               transition-transform transform hover:-translate-y-0.5 hidden">
+        Editar
+      </button>
+
+      <button type="button" id="btnCancelar"
+        class="bg-gradient-to-r from-gray-400 to-gray-500 text-white 
+               px-8 py-3 text-lg font-semibold rounded-2xl shadow-md 
+               hover:shadow-xl hover:from-gray-500 hover:to-gray-600 
+               transition-transform transform hover:-translate-y-0.5 hidden">
+        Cancelar
+      </button>
+    </div>
+
+  </form>
+</div>
+
 
   <!-- Listado de registros -->
   <div class="max-w-4xl mx-auto grid gap-6 md:grid-cols-2">
