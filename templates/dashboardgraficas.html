@@ -7,6 +7,7 @@
     <link rel="icon" href="../static/img/logo.png">
     <link rel="manifest" href="/manifest.json">
     
+    
       <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -727,6 +728,14 @@ const fallbackContent = {
         // Función para cargar contenido dinámico
         async function loadContent(section) {
             try {
+                if (section === 'notificaciones') {
+            const response = await fetch('/notificaciones'); // ruta real con datos
+            const html = await response.text();
+            document.getElementById("content-area").innerHTML = html;
+            return;
+        }
+
+                
                 const response = await fetch(`/partials/${section}`);
                 if(!response.ok) throw new Error("No se pudo cargar el contenido");
                 const html = await response.text();
@@ -811,75 +820,80 @@ function initApoyosScripts() {
 function cargarGraficaRefugios() {
     const ctx = document.getElementById('graficaRefugiosPie');
     if (!ctx) return;
+    const container = ctx.parentElement;
+    container.innerHTML = ''; // Limpiar contenido
 
     fetch('/grafica_refugios')
-        .then(res => {
-            const contentType = res.headers.get('Content-Type');
-            if (contentType && contentType.includes('application/json')) {
-                return res.json();
-            } else if (contentType && contentType.includes('image')) {
-                return res.blob();
-            }
-        })
+        .then(res => res.json())
         .then(data => {
-            if (data instanceof Blob) {
-                // Fallback: mostrar imagen
+            if (!data || data.length === 0) {
+                // Fallback: mostrar logo si no hay datos
                 const img = document.createElement('img');
-                img.src = URL.createObjectURL(data);
-                const container = document.getElementById('graficaRefugiosPie').parentElement;
-                container.innerHTML = '';
+                img.src = '/static/img/logo.png';
+                img.style.maxWidth = '100%';
                 container.appendChild(img);
             } else {
                 // Datos JSON: dibujar gráfica
                 const labels = data.map(d => d.refugio);
                 const totals = data.map(d => d.total);
                 const colors = ['#6366F1','#F59E0B','#10B981','#EF4444','#3B82F6','#8B5CF6','#F43F5E','#22D3EE','#FACC15','#EC4899'];
+
                 if (graficaRefugios) graficaRefugios.destroy();
                 graficaRefugios = new Chart(ctx.getContext('2d'), {
                     type: 'pie',
                     data: { labels, datasets:[{ data: totals, backgroundColor: colors, borderColor:'#fff', borderWidth:2 }] },
                     options: { responsive:true, plugins:{ legend:{position:'right'}, tooltip:{callbacks:{label:ctx => `${ctx.label}: $${ctx.formattedValue}`}}} }
                 });
+                container.appendChild(ctx);
             }
         })
-        .catch(console.error);
+        .catch(err => {
+            console.error(err);
+            // Mostrar logo si hay error de red
+            const img = document.createElement('img');
+            img.src = '/static/img/logo.png';
+            img.style.maxWidth = '100%';
+            container.appendChild(img);
+        });
 }
 
 function cargarGraficaTiempo() {
     const ctx = document.getElementById('graficaTiempoLine');
     if (!ctx) return;
+    const container = ctx.parentElement;
+    container.innerHTML = '';
 
     fetch('/grafica_tiempo')
-        .then(res => {
-            const contentType = res.headers.get('Content-Type');
-            if (contentType && contentType.includes('application/json')) {
-                return res.json();
-            } else if (contentType && contentType.includes('image')) {
-                return res.blob();
-            }
-        })
+        .then(res => res.json())
         .then(data => {
-            if (data instanceof Blob) {
-                // Fallback: mostrar imagen
+            if (!data || data.length === 0) {
+                // Fallback: mostrar logo si no hay datos
                 const img = document.createElement('img');
-                img.src = URL.createObjectURL(data);
-                const container = document.getElementById('graficaTiempoLine').parentElement;
-                container.innerHTML = '';
+                img.src = '/static/img/logo.png';
+                img.style.maxWidth = '100%';
                 container.appendChild(img);
             } else {
-                // Datos JSON: dibujar gráfica
                 const labels = data.map(d => d.mes);
                 const totals = data.map(d => d.total);
+
                 if (graficaTiempo) graficaTiempo.destroy();
                 graficaTiempo = new Chart(ctx.getContext('2d'), {
                     type:'line',
                     data:{ labels, datasets:[{ label:'Total apoyos', data:totals, fill:true, backgroundColor:'rgba(99,102,241,0.2)', borderColor:'#6366F1', tension:0.4, pointRadius:5, pointBackgroundColor:'#6366F1' }]},
                     options:{ responsive:true, plugins:{ legend:{display:true, position:'top'} }, scales:{ y:{beginAtZero:true} } }
                 });
+                container.appendChild(ctx);
             }
         })
-        .catch(console.error);
+        .catch(err => {
+            console.error(err);
+            const img = document.createElement('img');
+            img.src = '/static/img/logo.png';
+            img.style.maxWidth = '100%';
+            container.appendChild(img);
+        });
 }
+
 
     // Enviar formulario
     form.addEventListener('submit', e=>{

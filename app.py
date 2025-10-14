@@ -1,6 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, jsonify, session
 import mysql.connector
 from mysql.connector import Error
+from werkzeug.security import generate_password_hash, check_password_hash
+from passlib.hash import scrypt
 
 app = Flask(__name__)
 
@@ -13,6 +15,15 @@ def get_db_connection():
         password="",          # <-- agrega tu contraseña si tienes
         database="refugiomascotas"
     )
+
+from functools import wraps
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'usuario_id' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def index():
@@ -27,6 +38,7 @@ def offline():
     return render_template('offline.html')
 
 @app.route('/dashboard-graficas')
+
 def dashboard_graficas():
     return render_template('dashboardgraficas.html')
 
@@ -43,6 +55,82 @@ def padrinos():
     return render_template("padrinos.html")
 
 
+@app.route('/registrar_usuario', methods=['POST'])
+def registrar_usuario():
+    try:
+        correo = request.form['email']
+        contrasena = request.form['password']
+
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        # Verificar si el correo ya existe
+        cursor.execute("SELECT * FROM usuarios WHERE correo = %s", (correo,))
+        usuario_existente = cursor.fetchone()
+
+        if usuario_existente:
+            cursor.close()
+            db.close()
+            return jsonify({'success': False, 'message': '❌ El correo ya está registrado.'}), 400
+
+        # Encriptar la contraseña usando scrypt
+        hashed_password = scrypt.hash(contrasena)
+
+        # Insertar nuevo usuario
+        cursor.execute("""
+            INSERT INTO usuarios (correo, contrasena)
+            VALUES (%s, %s)
+        """, (correo, hashed_password))
+        db.commit()
+        new_id = cursor.lastrowid
+
+        cursor.close()
+        db.close()
+
+        return jsonify({'success': True, 'message': '✅ Usuario registrado correctamente.', 'idUsuario': new_id})
+
+    except Error as e:
+        return jsonify({'success': False, 'message': f'Error de base de datos: {str(e)}'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error del servidor: {str(e)}'}), 500
+
+
+@app.route('/login_usuario', methods=['POST'])
+def login_usuario():
+    try:
+        correo = request.form['email']
+        contrasena = request.form['password']
+
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        cursor.execute("SELECT idUsuario, correo, contrasena FROM usuarios WHERE correo = %s", (correo,))
+        usuario = cursor.fetchone()
+
+        cursor.close()
+        db.close()
+
+        if not usuario:
+            return jsonify({'success': False, 'message': '❌ Usuario no encontrado.'}), 404
+
+        if not scrypt.verify(contrasena, usuario['contrasena']):
+            return jsonify({'success': False, 'message': '❌ Contraseña incorrecta.'}), 401
+
+        # 🔹 Guardar sesión
+        session['usuario_id'] = usuario['idUsuario']
+        session['usuario_correo'] = usuario['correo']
+
+        return jsonify({
+            'success': True,
+            'message': '✅ Inicio de sesión exitoso.',
+            'idUsuario': usuario['idUsuario'],
+            'correo': usuario['correo']
+        })
+
+    except Error as e:
+        return jsonify({'success': False, 'message': f'Error de base de datos: {str(e)}'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error del servidor: {str(e)}'}), 500
 ##### APOYOS
 
 @app.route('/apoyos')
@@ -271,12 +359,60 @@ def refugios():
     return render_template("refugios.html")
 
 @app.route("/notificaciones")
+
 def notificaciones():
-    return render_template("notificaciones.html")
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT n.id, n.usuario_id, n.tipo_accion, n.descripcion, n.fecha,
+                   u.correo AS usuario_correo
+            FROM notificaciones n
+            LEFT JOIN usuarios u ON n.usuario_id = u.idUsuario
+            ORDER BY n.fecha DESC
+        """)
+        notificaciones = cursor.fetchall()
+
+        cursor.close()
+        db.close()
+
+        return render_template("notificaciones.html", notificaciones=notificaciones)
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error al obtener notificaciones: {str(e)}'}), 500
+
+
+@app.route('/listar_notificaciones')
+def listar_notificaciones():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+
+        # Consulta todas las notificaciones ordenadas por fecha descendente
+        cursor.execute("""
+            SELECT n.id, n.usuario_id, n.tipo_accion, n.descripcion, n.fecha,
+                   u.correo AS usuario_correo
+            FROM notificaciones n
+            LEFT JOIN usuarios u ON n.usuario_id = u.idUsuario
+            ORDER BY n.fecha DESC
+        """)
+        notificaciones = cursor.fetchall()
+
+        cursor.close()
+        db.close()
+
+        # Renderiza el template pasando las notificaciones
+        return render_template("notificaciones.html", notificaciones=notificaciones)
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error al obtener notificaciones: {str(e)}'}), 500
+
 
 @app.route("/partials/<name>")
 def partials(name):
     return render_template(f"{name}.html")
+
 
 
 

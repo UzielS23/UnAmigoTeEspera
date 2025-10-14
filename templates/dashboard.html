@@ -2223,15 +2223,16 @@
         });
     </script>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(reg => console.log('Service Worker registrado', reg))
-                    .catch(err => console.log('Error al registrar SW', err));
-            });
-        }
-    </script>
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+            .then(reg => console.log('Service Worker registrado con scope /', reg))
+            .catch(err => console.log('Error al registrar SW', err));
+    });
+}
+</script>
+
     <script>
         // Toggle para menú móvil
         (function(){

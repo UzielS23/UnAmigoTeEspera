@@ -692,7 +692,7 @@
 
 
           
-            <form class="login-form" onsubmit="return handleSubmit(event)" id="mainForm" novalidate method="post" action="/login">
+           <form class="login-form" onsubmit="return handleSubmit(event)" id="mainForm" novalidate method="post" action="/login_usuario">
                 <div class="form-group">
                     <label class="form-label" for="email">Correo Electrónico</label>
                     <input 
@@ -796,43 +796,60 @@
         }
 
         // Función principal para manejar el envío del formulario
-        function handleSubmit(event) {
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+     function handleSubmit(event) {
+    event.preventDefault();
 
-            if (!email || !password) {
-                showMessage('Por favor completa todos los campos obligatorios', 'error');
-                event.preventDefault();
-                return false;
-            }
+    const correo = document.getElementById('email').value.trim();
+    const contrasena = document.getElementById('password').value.trim();
+    const confirmar = document.getElementById('confirmPassword').value.trim();
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                showMessage('Por favor ingresa un correo electrónico válido', 'error');
-                event.preventDefault();
-                return false;
-            }
+    if (!correo || !contrasena) {
+        showMessage('Por favor completa todos los campos obligatorios', 'error');
+        return false;
+    }
 
-            if (!isLoginMode) {
-                const nombre = document.getElementById('nombre').value.trim();
-                if (!nombre) {
-                    showMessage('Por favor ingresa tu nombre completo', 'error');
-                    event.preventDefault();
-                    return false;
-                }
-                if (password !== confirmPassword) {
-                    showMessage('Las contraseñas no coinciden', 'error');
-                    event.preventDefault();
-                    return false;
-                }
-                document.getElementById('mainForm').action = '/register';
+    if (!isLoginMode && contrasena !== confirmar) {
+        showMessage('Las contraseñas no coinciden', 'error');
+        return false;
+    }
+
+    // 🔹 Determinar endpoint
+    const url = isLoginMode ? '/login_usuario' : '/registrar_usuario';
+
+    // 🔹 Enviar datos con Fetch
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({ email: correo, password: contrasena })
+
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            showMessage(data.message, 'success');
+
+            if (isLoginMode) {
+                // 🔹 Redirigir al dashboard tras login
+                setTimeout(() => {
+                    window.location.href = '/dashboard-graficas';
+                }, 1500);
             } else {
-                document.getElementById('mainForm').action = '/login';
+                // 🔹 Cambiar a modo login después de registrarse
+                setTimeout(() => toggleForm(), 1500);
             }
-
-            return true;
+        } else {
+            showMessage(data.message, 'error');
         }
+    })
+    .catch(err => {
+        console.error(err);
+        showMessage('Error de conexión con el servidor', 'error');
+    });
+
+    return false;
+}
 
         // Función para login social
         function socialLogin(provider) {
