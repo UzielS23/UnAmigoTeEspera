@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - UnAmigoTeEspera.com</title>
+    <link rel="icon" href="../static/img/logo.png">
+    <link rel="manifest" href="/manifest.json">
     
       <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -764,6 +766,42 @@ document.querySelectorAll('.sidebar-link').forEach(link => {
                     initApoyosScripts();
                 })
                 .catch(err => console.error('Error cargando Apoyos:', err));
+        } else if(section === 'refugios'){
+            // Cargar la página parcial de refugios y asegurar inicialización del módulo
+            fetch('/refugios')
+                .then(res => res.text())
+                .then(html => {
+                    const content = document.getElementById("content-area");
+                    content.innerHTML = html;
+
+                    // Eliminar cualquier <script src="/static/js/refugios.js"> que haya sido inyectado vía innerHTML
+                    // Los scripts añadidos por innerHTML no se ejecutan, y pueden hacer que la comprobación posterior falle.
+                    content.querySelectorAll('script[src="/static/js/refugios.js"]').forEach(s => s.remove());
+
+                    // Si initRefugios no está disponible, cargar el script y ejecutarlo al terminar.
+                    if(typeof window.initRefugios !== 'function'){
+                        // Evitar duplicar cargas: marcar el script con id
+                        if(!document.querySelector('script#refugios-js')){
+                            const s = document.createElement('script');
+                            s.id = 'refugios-js';
+                            s.src = '/static/js/refugios.js';
+                            s.defer = true;
+                            s.onload = () => { if(window.initRefugios) window.initRefugios(); }
+                            document.body.appendChild(s);
+                        } else {
+                            // Si existe el tag pero no se ejecutó, forzar otra carga para asegurar ejecución
+                            const s = document.createElement('script');
+                            s.src = '/static/js/refugios.js';
+                            s.defer = true;
+                            s.onload = () => { if(window.initRefugios) window.initRefugios(); }
+                            document.body.appendChild(s);
+                        }
+                    } else {
+                        // Ya está cargado y ejecutable
+                        window.initRefugios();
+                    }
+                })
+                .catch(err => console.error('Error cargando Refugios:', err));
         } else {
             loadContent(section);
         }
@@ -797,40 +835,78 @@ function initApoyosScripts() {
     }
 
     // Funciones de gráficas
-    function cargarGraficaRefugios() {
-        const ctx = document.getElementById('graficaRefugiosPie');
-        if(!ctx) return;
-        fetch('/grafica_refugios')
-            .then(res => res.json())
-            .then(data => {
+function cargarGraficaRefugios() {
+    const ctx = document.getElementById('graficaRefugiosPie');
+    if (!ctx) return;
+
+    fetch('/grafica_refugios')
+        .then(res => {
+            const contentType = res.headers.get('Content-Type');
+            if (contentType && contentType.includes('application/json')) {
+                return res.json();
+            } else if (contentType && contentType.includes('image')) {
+                return res.blob();
+            }
+        })
+        .then(data => {
+            if (data instanceof Blob) {
+                // Fallback: mostrar imagen
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(data);
+                const container = document.getElementById('graficaRefugiosPie').parentElement;
+                container.innerHTML = '';
+                container.appendChild(img);
+            } else {
+                // Datos JSON: dibujar gráfica
                 const labels = data.map(d => d.refugio);
                 const totals = data.map(d => d.total);
                 const colors = ['#6366F1','#F59E0B','#10B981','#EF4444','#3B82F6','#8B5CF6','#F43F5E','#22D3EE','#FACC15','#EC4899'];
-                if(graficaRefugios) graficaRefugios.destroy();
+                if (graficaRefugios) graficaRefugios.destroy();
                 graficaRefugios = new Chart(ctx.getContext('2d'), {
                     type: 'pie',
                     data: { labels, datasets:[{ data: totals, backgroundColor: colors, borderColor:'#fff', borderWidth:2 }] },
                     options: { responsive:true, plugins:{ legend:{position:'right'}, tooltip:{callbacks:{label:ctx => `${ctx.label}: $${ctx.formattedValue}`}}} }
                 });
-            }).catch(console.error);
-    }
+            }
+        })
+        .catch(console.error);
+}
 
-    function cargarGraficaTiempo() {
-        const ctx = document.getElementById('graficaTiempoLine');
-        if(!ctx) return;
-        fetch('/grafica_tiempo')
-            .then(res => res.json())
-            .then(data => {
+function cargarGraficaTiempo() {
+    const ctx = document.getElementById('graficaTiempoLine');
+    if (!ctx) return;
+
+    fetch('/grafica_tiempo')
+        .then(res => {
+            const contentType = res.headers.get('Content-Type');
+            if (contentType && contentType.includes('application/json')) {
+                return res.json();
+            } else if (contentType && contentType.includes('image')) {
+                return res.blob();
+            }
+        })
+        .then(data => {
+            if (data instanceof Blob) {
+                // Fallback: mostrar imagen
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(data);
+                const container = document.getElementById('graficaTiempoLine').parentElement;
+                container.innerHTML = '';
+                container.appendChild(img);
+            } else {
+                // Datos JSON: dibujar gráfica
                 const labels = data.map(d => d.mes);
                 const totals = data.map(d => d.total);
-                if(graficaTiempo) graficaTiempo.destroy();
+                if (graficaTiempo) graficaTiempo.destroy();
                 graficaTiempo = new Chart(ctx.getContext('2d'), {
                     type:'line',
                     data:{ labels, datasets:[{ label:'Total apoyos', data:totals, fill:true, backgroundColor:'rgba(99,102,241,0.2)', borderColor:'#6366F1', tension:0.4, pointRadius:5, pointBackgroundColor:'#6366F1' }]},
                     options:{ responsive:true, plugins:{ legend:{display:true, position:'top'} }, scales:{ y:{beginAtZero:true} } }
                 });
-            }).catch(console.error);
-    }
+            }
+        })
+        .catch(console.error);
+}
 
     // Enviar formulario
     form.addEventListener('submit', e=>{
@@ -957,3 +1033,14 @@ function initApoyosScripts() {
     </script>
 </body>
 </html>
+<script>
+if (navigator.serviceWorker) {
+    navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data && event.data.type === 'RESOURCE_UPDATED') {
+            console.log('Recurso actualizado desde SW:', event.data.url);
+
+           
+        }
+    });
+}
+</script>
