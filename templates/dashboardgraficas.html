@@ -847,80 +847,127 @@ function initApoyosScripts() {
 function cargarGraficaRefugios() {
     const ctx = document.getElementById('graficaRefugiosPie');
     if (!ctx) return;
-    const container = ctx.parentElement;
-    container.innerHTML = ''; // Limpiar contenido
+    
+    // Limpiar solo el lienzo, no todo el div
+    const chartCtx = ctx.getContext('2d');
+    chartCtx.clearRect(0, 0, ctx.width, ctx.height);
 
     fetch('/grafica_refugios')
         .then(res => res.json())
         .then(data => {
             if (!data || data.length === 0) {
-                // Fallback: mostrar logo si no hay datos
                 const img = document.createElement('img');
                 img.src = '/static/img/logo.png';
                 img.style.maxWidth = '100%';
-                container.appendChild(img);
+                ctx.replaceWith(img); // reemplaza el canvas temporalmente
             } else {
-                // Datos JSON: dibujar gráfica
                 const labels = data.map(d => d.refugio);
                 const totals = data.map(d => d.total);
                 const colors = ['#6366F1','#F59E0B','#10B981','#EF4444','#3B82F6','#8B5CF6','#F43F5E','#22D3EE','#FACC15','#EC4899'];
 
                 if (graficaRefugios) graficaRefugios.destroy();
-                graficaRefugios = new Chart(ctx.getContext('2d'), {
+                graficaRefugios = new Chart(ctx, {
                     type: 'pie',
                     data: { labels, datasets:[{ data: totals, backgroundColor: colors, borderColor:'#fff', borderWidth:2 }] },
-                    options: { responsive:true, plugins:{ legend:{position:'right'}, tooltip:{callbacks:{label:ctx => `${ctx.label}: $${ctx.formattedValue}`}}} }
+                    options: { 
+                        responsive:true, 
+                        plugins:{
+                            legend:{position:'right'},
+                            tooltip:{callbacks:{label:ctx => `${ctx.label}: $${ctx.formattedValue}`}}
+                        } 
+                    }
                 });
-                container.appendChild(ctx);
             }
         })
         .catch(err => {
             console.error(err);
-            // Mostrar logo si hay error de red
             const img = document.createElement('img');
             img.src = '/static/img/logo.png';
             img.style.maxWidth = '100%';
-            container.appendChild(img);
+            ctx.replaceWith(img);
         });
 }
 
 function cargarGraficaTiempo() {
     const ctx = document.getElementById('graficaTiempoLine');
     if (!ctx) return;
-    const container = ctx.parentElement;
-    container.innerHTML = '';
+
+    // Limpiar solo el canvas, sin tocar el párrafo ni el contenedor
+    const chartCtx = ctx.getContext('2d');
+    chartCtx.clearRect(0, 0, ctx.width, ctx.height);
 
     fetch('/grafica_tiempo')
         .then(res => res.json())
         .then(data => {
             if (!data || data.length === 0) {
-                // Fallback: mostrar logo si no hay datos
+                // Si no hay datos, mostrar el logo en lugar del canvas
                 const img = document.createElement('img');
                 img.src = '/static/img/logo.png';
+                img.alt = 'Sin datos disponibles';
                 img.style.maxWidth = '100%';
-                container.appendChild(img);
+                img.style.margin = '0 auto';
+                img.classList.add('block');
+
+                // Reemplaza temporalmente el canvas por la imagen
+                ctx.replaceWith(img);
             } else {
+                // Si ya se había reemplazado el canvas, volver a crearlo
+                if (!(ctx instanceof HTMLCanvasElement)) {
+                    const newCanvas = document.createElement('canvas');
+                    newCanvas.id = 'graficaTiempoLine';
+                    ctx.parentElement.insertBefore(newCanvas, ctx.parentElement.querySelector('p'));
+                    ctx.remove();
+                    ctx = newCanvas;
+                }
+
                 const labels = data.map(d => d.mes);
                 const totals = data.map(d => d.total);
 
+                // Destruir gráfica anterior si existe
                 if (graficaTiempo) graficaTiempo.destroy();
+
+                // Crear la gráfica
                 graficaTiempo = new Chart(ctx.getContext('2d'), {
-                    type:'line',
-                    data:{ labels, datasets:[{ label:'Total apoyos', data:totals, fill:true, backgroundColor:'rgba(99,102,241,0.2)', borderColor:'#6366F1', tension:0.4, pointRadius:5, pointBackgroundColor:'#6366F1' }]},
-                    options:{ responsive:true, plugins:{ legend:{display:true, position:'top'} }, scales:{ y:{beginAtZero:true} } }
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Total apoyos',
+                            data: totals,
+                            fill: true,
+                            backgroundColor: 'rgba(99,102,241,0.2)',
+                            borderColor: '#6366F1',
+                            tension: 0.4,
+                            pointRadius: 5,
+                            pointBackgroundColor: '#6366F1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: true, position: 'top' }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
                 });
-                container.appendChild(ctx);
             }
         })
         .catch(err => {
-            console.error(err);
+            console.error('Error cargando gráfica de tiempo:', err);
+
+            // Fallback visual si falla la conexión
             const img = document.createElement('img');
             img.src = '/static/img/logo.png';
+            img.alt = 'Error al cargar gráfica';
             img.style.maxWidth = '100%';
-            container.appendChild(img);
+            img.style.margin = '0 auto';
+            img.classList.add('block');
+
+            ctx.replaceWith(img);
         });
 }
-
 
     // Enviar formulario
     form.addEventListener('submit', e=>{
