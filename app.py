@@ -359,7 +359,6 @@ def refugios():
     return render_template("refugios.html")
 
 @app.route("/notificaciones")
-
 def notificaciones():
     try:
         db = get_db_connection()
@@ -384,6 +383,7 @@ def notificaciones():
 
 
 @app.route('/listar_notificaciones')
+@login_required
 def listar_notificaciones():
     try:
         db = get_db_connection()
