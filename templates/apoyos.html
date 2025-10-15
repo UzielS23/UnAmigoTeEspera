@@ -185,9 +185,18 @@ if (navigator.serviceWorker) {
   </form>
 </div>
 
+<div class="max-w-4xl mx-auto mb-6">
+  <input 
+    type="text" 
+    id="buscadorApoyos" 
+    placeholder="🔍 Buscar por mascota, padrino, refugio, causa o fecha..."
+    class="w-full p-3 rounded-2xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+    oninput="filtrarApoyos()"
+  >
+</div>
 
   <!-- Listado de registros -->
-  <div class="max-w-4xl mx-auto grid gap-6 md:grid-cols-2">
+  <div id="contenedorApoyos"  class="max-w-4xl mx-auto grid gap-6 md:grid-cols-2">
     <p class="text-gray-600 col-span-full text-center mb-4">
       Consulta los apoyos registrados con detalles de mascota, padrino, refugio, monto, causa y fecha.
     </p>
@@ -221,6 +230,35 @@ if (navigator.serviceWorker) {
       </div>
     {% endfor %}
   </div>
+<script>
+window.filtrarApoyos = function() {
+    const input = document.getElementById('buscadorApoyos');
+    if(!input) return;
+    const texto = input.value.toLowerCase().trim();
+    const apoyos = document.querySelectorAll('#contenedorApoyos > div.relative');
 
+    apoyos.forEach(apoyo => {
+        const contenido = apoyo.innerText.toLowerCase();
+        apoyo.style.display = contenido.includes(texto) ? '' : 'none';
+    });
+
+    const mensaje = document.getElementById('sinResultados');
+    const visibles = Array.from(apoyos).some(a => a.style.display !== 'none');
+
+    if(!visibles) {
+        if(!mensaje) {
+            const msg = document.createElement('p');
+            msg.id = 'sinResultados';
+            msg.textContent = 'No se encontraron apoyos que coincidan con la búsqueda.';
+            msg.className = 'text-center text-gray-500 col-span-full';
+            document.getElementById('contenedorApoyos').appendChild(msg);
+        }
+    } else if(mensaje) {
+        mensaje.remove();
+    }
+};
+</script>
 </body>
 </html>
+
+

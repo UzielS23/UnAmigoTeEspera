@@ -1320,6 +1320,34 @@ function cargarGraficaTiempo() {
             }).catch(err=>{console.error(err); showFlashMessage('Error de conexión','red');});
     }
 
+    window.filtrarApoyos = function() {
+    const input = document.getElementById('buscadorApoyos');
+    if(!input) return;
+    const texto = input.value.toLowerCase().trim();
+    const apoyos = document.querySelectorAll('#contenedorApoyos > div.relative');
+
+    apoyos.forEach(apoyo => {
+        const contenido = apoyo.innerText.toLowerCase();
+        apoyo.style.display = contenido.includes(texto) ? '' : 'none';
+    });
+
+    const mensaje = document.getElementById('sinResultados');
+    const visibles = Array.from(apoyos).some(a => a.style.display !== 'none');
+
+    if(!visibles) {
+        if(!mensaje) {
+            const msg = document.createElement('p');
+            msg.id = 'sinResultados';
+            msg.textContent = 'No se encontraron apoyos que coincidan con la búsqueda.';
+            msg.className = 'text-center text-gray-500 col-span-full';
+            document.getElementById('contenedorApoyos').appendChild(msg);
+        }
+    } else if(mensaje) {
+        mensaje.remove();
+    }
+};
+
+
     function refreshApoyos() {
         fetch('/partials/apoyos').then(res=>res.text())
             .then(html=>{
