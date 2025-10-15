@@ -759,6 +759,176 @@ def api_delete_mascota(idMascota):
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
+
+@app.route('/api/padrinos', methods=['GET'])
+def api_list_padrinos():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT idPadrino, nombrePadrino, sexo, telefono, correoElectronico
+            FROM padrinos
+            ORDER BY idPadrino DESC
+        """)
+        padrinos = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return jsonify(padrinos)
+    except Error as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# API: crear padrino
+@app.route('/api/padrinos', methods=['POST'])
+def api_create_padrino():
+    try:
+        data = request.get_json() or {}
+       
+        nombrePadrino = data.get('nombrePadrino')
+        sexo = data.get('sexo')
+        telefono = data.get('telefono')
+        correoElectronico = data.get('correoElectronico')
+        password = data.get('password')  # Aquí deberías hashear la password antes de guardar
+
+
+        if not all([nombrePadrino, sexo, telefono, correoElectronico, password]):
+            return jsonify({'success': False, 'message': 'Faltan campos requeridos'}), 400
+
+
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO padrinos (nombrePadrino, sexo, telefono, correoElectronico, password)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (nombrePadrino, sexo, telefono, correoElectronico, password))  # Hashear password en producción
+       
+        db.commit()
+        new_id = cursor.lastrowid
+        cursor.close()
+        db.close()
+
+
+        return jsonify({'success': True, 'message': 'Padrino registrado ✅', 'idPadrino': new_id})
+
+
+    except Error as e:
+        return jsonify({'success': False, 'message': f'Error de base de datos: {str(e)}'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error del servidor: {str(e)}'}), 500
+
+
+# API: obtener padrino por ID
+@app.route('/api/padrinos/<int:idPadrino>', methods=['GET'])
+def api_get_padrino(idPadrino):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT idPadrino, nombrePadrino, sexo, telefono, correoElectronico
+            FROM padrinos
+            WHERE idPadrino = %s
+        """, (idPadrino,))
+        padrino = cursor.fetchone()
+        cursor.close()
+        db.close()
+       
+        if padrino:
+            return jsonify(padrino)
+        else:
+            return jsonify({'success': False, 'message': 'Padrino no encontrado'}), 404
+           
+    except Error as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# API: actualizar padrino
+@app.route('/api/padrinos/<int:idPadrino>', methods=['PUT'])
+def api_update_padrino(idPadrino):
+    try:
+        data = request.get_json() or {}
+       
+        nombrePadrino = data.get('nombrePadrino')
+        sexo = data.get('sexo')
+        telefono = data.get('telefono')
+        correoElectronico = data.get('correoElectronico')
+        password = data.get('password')
+
+
+        # Validar campos requeridos (password opcional)
+        if not all([nombrePadrino, sexo, telefono, correoElectronico]):
+            return jsonify({'success': False, 'message': 'Faltan campos requeridos'}), 400
+
+
+        db = get_db_connection()
+        cursor = db.cursor()
+
+
+        # Actualizar el padrino
+        if password:
+            # Hashear password si se proporciona
+            cursor.execute("""
+                UPDATE padrinos
+                SET nombrePadrino=%s, sexo=%s, telefono=%s, correoElectronico=%s, password=%s
+                WHERE idPadrino=%s
+            """, (nombrePadrino, sexo, telefono, correoElectronico, password, idPadrino))  # Hashear en producción
+        else:
+            cursor.execute("""
+                UPDATE padrinos
+                SET nombrePadrino=%s, sexo=%s, telefono=%s, correoElectronico=%s
+                WHERE idPadrino=%s
+            """, (nombrePadrino, sexo, telefono, correoElectronico, idPadrino))
+       
+        db.commit()
+        affected = cursor.rowcount
+        cursor.close()
+        db.close()
+
+
+        if affected > 0:
+            return jsonify({'success': True, 'message': 'Padrino actualizado ✏'})
+        else:
+            return jsonify({'success': False, 'message': 'Padrino no encontrado'}), 404
+
+
+    except Error as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# API: eliminar padrino
+@app.route('/api/padrinos/<int:idPadrino>', methods=['DELETE'])
+def api_delete_padrino(idPadrino):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+
+
+        # Eliminar el padrino
+        cursor.execute("DELETE FROM padrinos WHERE idPadrino = %s", (idPadrino,))
+        db.commit()
+        affected = cursor.rowcount
+        cursor.close()
+        db.close()
+       
+        if affected > 0:
+            return jsonify({'success': True, 'message': 'Padrino eliminado 🗑'})
+        else:
+            return jsonify({'success': False, 'message': 'Padrino no encontrado'}), 404
+           
+    except Error as e:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'db' in locals():
+            db.close()
+        return jsonify({'success': False, 'message': str(e)}), 500
+    except Exception as e:
+        if 'cursor' in locals():
+            cursor.close()
+        if 'db' in locals():
+            db.close()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 if __name__ == '__main__':
     # Cambiado para acceder desde otros dispositivos en la misma red
     app.run(host='0.0.0.0', port=5000, debug=True)

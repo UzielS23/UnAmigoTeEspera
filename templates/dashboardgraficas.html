@@ -1,3 +1,4 @@
+    <!-- dashboard con todos los modulos terminados -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -773,6 +774,14 @@ document.querySelectorAll('.sidebar-link').forEach(link => {
                     initApoyosScripts();
                 })
                 .catch(err => console.error('Error cargando Apoyos:', err));
+        } else if(section === 'padrinos'){
+            fetch('/padrinos')
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById("content-area").innerHTML = html;
+                    initPadrinosScripts();
+                })
+                .catch(err => console.error('Error cargando Padrinos:', err));
         } else if(section === 'refugios'){
             fetch('/refugios')
                 .then(res => res.text())
@@ -1342,6 +1351,251 @@ function cargarGraficaTiempo() {
     cargarGraficaTiempo();
 }
 
+// Función que se llama después de cargar dinámicamente el módulo de Padrinos
+function initPadrinosScripts() {
+    const formularioPadrino = document.getElementById('formularioPadrino');
+    const tarjetasPadrinos = document.getElementById('tarjetasPadrinos');
+    const busquedaPadrinos = document.getElementById('busquedaPadrinos');
+    const modalEditarPadrino = document.getElementById('modalEditarPadrino');
+    const formularioEditarPadrino = document.getElementById('formularioEditarPadrino');
+    const cerrarModal = modalEditarPadrino ? modalEditarPadrino.querySelector('.cerrar-modal') : null;
+    if (!formularioPadrino || !tarjetasPadrinos || !busquedaPadrinos || !modalEditarPadrino || !formularioEditarPadrino) return; // Por seguridad
+
+    let todosLosPadrinos = [];
+
+    async function cargarPadrinos() {
+        try {
+            const response = await fetch('/api/padrinos');
+            console.log('Respuesta de la API:', response);
+            if (response.ok) {
+                todosLosPadrinos = await response.json();
+                console.log('Padrinos recibidos:', todosLosPadrinos);
+                mostrarPadrinos(todosLosPadrinos);
+            } else {
+                console.error('Error al cargar padrinos:', response.status);
+                mostrarMensaje('Error al cargar los padrinos: ' + response.status, 'error');
+            }
+        } catch (error) {
+            console.error('Error de conexión:', error);
+            mostrarMensaje('Error de conexión al servidor: ' + error.message, 'error');
+        }
+    }
+
+    function mostrarPadrinos(padrinos) {
+        tarjetasPadrinos.innerHTML = '';
+        if (padrinos.length === 0) {
+            tarjetasPadrinos.innerHTML = '<p>No hay padrinos registrados.</p>';
+            return;
+        }
+        padrinos.forEach(padrino => {
+            const tarjeta = document.createElement('div');
+            tarjeta.className = 'tarjeta-padrino';
+            tarjeta.dataset.id = padrino.idPadrino; // Guardar ID para editar/eliminar
+            tarjeta.innerHTML = `
+                <h3>${padrino.nombrePadrino} 🛡️</h3>
+                <p><strong>Sexo:</strong> <span class="sexo-${padrino.sexo.toLowerCase()}">${padrino.sexo}</span></p>
+                <p><strong>Teléfono:</strong> ${padrino.telefono}</p>
+                <p><strong>Correo:</strong> ${padrino.correoElectronico}</p>
+                <div class="acciones">
+                    <button class="editar">Editar</button>
+                    <button class="eliminar">Eliminar</button>
+                </div>
+            `;
+            tarjetasPadrinos.appendChild(tarjeta);
+        });
+
+        // Agregar eventos a los botones de editar y eliminar
+        document.querySelectorAll('.tarjeta-padrino .editar').forEach(boton => {
+            boton.addEventListener('click', () => {
+                const id = boton.closest('.tarjeta-padrino').dataset.id;
+                const padrino = todosLosPadrinos.find(p => p.idPadrino == id);
+                abrirModalEditar(padrino);
+            });
+        });
+
+        document.querySelectorAll('.tarjeta-padrino .eliminar').forEach(boton => {
+            boton.addEventListener('click', () => {
+                const id = boton.closest('.tarjeta-padrino').dataset.id;
+                const padrino = todosLosPadrinos.find(p => p.idPadrino == id);
+                if (confirm(`¿Estás seguro de que quieres eliminar a ${padrino.nombrePadrino}?`)) {
+                    eliminarPadrino(id);
+                }
+            });
+        });
+    }
+
+    async function registrarPadrino(datos) {
+        try {
+            const response = await fetch('/api/padrinos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos)
+            });
+
+            const resultado = await response.json();
+            console.log('Resultado de registro:', resultado);
+            
+            if (resultado.success) {
+                mostrarMensaje('¡Padrino registrado con éxito! ✅', 'success');
+                formularioPadrino.reset();
+                busquedaPadrinos.value = ''; // Limpiar búsqueda
+                await cargarPadrinos();
+                return true;
+            } else {
+                mostrarMensaje(resultado.message || 'Error al registrar padrino', 'error');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error de conexión al registrar:', error);
+            mostrarMensaje('Error de conexión: ' + error.message, 'error');
+            return false;
+        }
+    }
+
+    async function actualizarPadrino(id, datos) {
+        try {
+            const response = await fetch(`/api/padrinos/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datos)
+            });
+
+            const resultado = await response.json();
+            console.log('Resultado de actualización:', resultado);
+            
+            if (resultado.success) {
+                mostrarMensaje('¡Padrino actualizado con éxito! ✅', 'success');
+                modalEditarPadrino.classList.remove('mostrar');
+                busquedaPadrinos.value = ''; // Limpiar búsqueda
+                await cargarPadrinos();
+                return true;
+            } else {
+                mostrarMensaje(resultado.message || 'Error al actualizar padrino', 'error');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error de conexión al actualizar:', error);
+            mostrarMensaje('Error de conexión: ' + error.message, 'error');
+            return false;
+        }
+    }
+
+    async function eliminarPadrino(id) {
+        try {
+            const response = await fetch(`/api/padrinos/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const resultado = await response.json();
+            console.log('Resultado de eliminación:', resultado);
+            
+            if (resultado.success) {
+                mostrarMensaje('¡Padrino eliminado con éxito! 🗑', 'success');
+                busquedaPadrinos.value = ''; // Limpiar búsqueda
+                await cargarPadrinos();
+                return true;
+            } else {
+                mostrarMensaje(resultado.message || 'Error al eliminar padrino', 'error');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error de conexión al eliminar:', error);
+            mostrarMensaje('Error de conexión: ' + error.message, 'error');
+            return false;
+        }
+    }
+
+    function mostrarMensaje(mensaje, tipo) {
+        let mensajeDiv = document.querySelector('.mensaje-exito');
+        if (!mensajeDiv) {
+            mensajeDiv = document.createElement('div');
+            mensajeDiv.className = 'mensaje-exito';
+            formularioPadrino.parentNode.insertBefore(mensajeDiv, formularioPadrino);
+        }
+        
+        mensajeDiv.textContent = mensaje;
+        mensajeDiv.className = `mensaje-exito mostrar ${tipo}`;
+        
+        setTimeout(() => {
+            mensajeDiv.classList.remove('mostrar');
+        }, 4000);
+    }
+
+    function filtrarPadrinos(textoBusqueda) {
+        const texto = textoBusqueda.toLowerCase().trim();
+        const padrinosFiltrados = todosLosPadrinos.filter(padrino => 
+            (padrino.nombrePadrino && padrino.nombrePadrino.toLowerCase().includes(texto)) ||
+            (padrino.sexo && padrino.sexo.toLowerCase().includes(texto)) ||
+            (padrino.telefono && padrino.telefono.toLowerCase().includes(texto)) ||
+            (padrino.correoElectronico && padrino.correoElectronico.toLowerCase().includes(texto))
+        );
+        mostrarPadrinos(padrinosFiltrados);
+    }
+
+    function abrirModalEditar(padrino) {
+        formularioEditarPadrino.querySelector('[name="id"]').value = padrino.idPadrino;
+        formularioEditarPadrino.querySelector('[name="nombrePadrino"]').value = padrino.nombrePadrino;
+        formularioEditarPadrino.querySelector('[name="sexo"]').value = padrino.sexo;
+        formularioEditarPadrino.querySelector('[name="telefono"]').value = padrino.telefono;
+        formularioEditarPadrino.querySelector('[name="correoElectronico"]').value = padrino.correoElectronico;
+        formularioEditarPadrino.querySelector('[name="password"]').value = ''; // Vacío por defecto
+        modalEditarPadrino.classList.add('mostrar');
+    }
+
+    // Eventos
+    busquedaPadrinos.addEventListener('input', (evento) => {
+        filtrarPadrinos(evento.target.value);
+    });
+
+    formularioPadrino.addEventListener('submit', async (evento) => {
+        evento.preventDefault();
+        const datos = Object.fromEntries(new FormData(formularioPadrino).entries());
+        
+        if (!datos.nombrePadrino || !datos.sexo || !datos.telefono || !datos.correoElectronico || !datos.password) {
+            mostrarMensaje('Por favor completa todos los campos requeridos', 'error');
+            return;
+        }
+        
+        await registrarPadrino(datos);
+    });
+
+    formularioEditarPadrino.addEventListener('submit', async (evento) => {
+        evento.preventDefault();
+        const datos = Object.fromEntries(new FormData(formularioEditarPadrino).entries());
+        
+        if (!datos.nombrePadrino || !datos.sexo || !datos.telefono || !datos.correoElectronico) {
+            mostrarMensaje('Por favor completa todos los campos requeridos', 'error');
+            return;
+        }
+        
+        datos.id = parseInt(datos.id);
+        
+        await actualizarPadrino(datos.id, datos);
+    });
+
+    if (cerrarModal) {
+        cerrarModal.addEventListener('click', () => {
+            modalEditarPadrino.classList.remove('mostrar');
+        });
+    }
+
+    // Cerrar modal al hacer clic fuera
+    modalEditarPadrino.addEventListener('click', (evento) => {
+        if (evento.target === modalEditarPadrino) {
+            modalEditarPadrino.classList.remove('mostrar');
+        }
+    });
+
+    cargarPadrinos();
+}
+
         // Mobile menu toggle
         const menuToggle = document.getElementById('menuToggle');
         const sidebar = document.getElementById('sidebar');
@@ -1391,4 +1645,4 @@ if (navigator.serviceWorker) {
         }
     });
 }
-</script>
+</script> 
