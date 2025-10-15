@@ -578,8 +578,185 @@ def listar_notificaciones():
 def partials(name):
     return render_template(f"{name}.html")
 
+#MASCOTAS#
 
+# API: listado de mascotas (JSON)
+@app.route('/api/mascotas', methods=['GET'])
+def api_list_mascotas():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT m.*, r.nombre as nombreRefugio 
+            FROM mascotas m 
+            LEFT JOIN refugios r ON m.idRefugio = r.idRefugio 
+            ORDER BY m.idMascota DESC
+        """)
+        mascotas = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return jsonify(mascotas)
+    except Error as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
 
+# API: crear mascota
+@app.route('/api/mascotas', methods=['POST'])
+def api_create_mascota():
+    try:
+        data = request.get_json() or {}
+        
+        nombre = data.get('nombre')
+        animal = data.get('animal')
+        sexo = data.get('sexo')
+        raza = data.get('raza')
+        peso = data.get('peso')
+        condiciones = data.get('condiciones')
+        edad = data.get('edad')
+        fechaIngreso = data.get('fechaIngreso')
+        idRefugio = data.get('idRefugio')
+        estado = data.get('estado')
+
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO mascotas (nombre, animal, sexo, raza, peso, condiciones, edad, fechaIngreso, idRefugio, estado)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (nombre, animal, sexo, raza or None, peso, condiciones or None, edad or None, fechaIngreso, idRefugio, estado))
+        
+        db.commit()
+        new_id = cursor.lastrowid
+        cursor.close()
+        db.close()
+
+        return jsonify({'success': True, 'message': 'Mascota registrada ✅', 'idMascota': new_id})
+
+    except Error as e:
+        return jsonify({'success': False, 'message': f'Error de base de datos: {str(e)}'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error del servidor: {str(e)}'}), 500
+
+# API: obtener mascota por ID
+@app.route('/api/mascotas/<int:idMascota>', methods=['GET'])
+def api_get_mascota(idMascota):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT m.*, r.nombre as nombreRefugio 
+            FROM mascotas m 
+            LEFT JOIN refugios r ON m.idRefugio = r.idRefugio 
+            WHERE m.idMascota = %s
+        """, (idMascota,))
+        mascota = cursor.fetchone()
+        cursor.close()
+        db.close()
+        
+        if mascota:
+            return jsonify(mascota)
+        else:
+            return jsonify({'success': False, 'message': 'Mascota no encontrada'}), 404
+            
+    except Error as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# API: actualizar mascota
+@app.route('/api/mascotas/<int:idMascota>', methods=['PUT'])
+def api_update_mascota(idMascota):
+    try:
+        data = request.get_json() or {}
+        
+        nombre = data.get('nombre')
+        animal = data.get('animal')
+        sexo = data.get('sexo')
+        raza = data.get('raza')
+        peso = data.get('peso')
+        condiciones = data.get('condiciones')
+        edad = data.get('edad')
+        fechaIngreso = data.get('fechaIngreso')
+        idRefugio = data.get('idRefugio')
+        estado = data.get('estado')
+
+        # Validar campos requeridos
+        if not all([nombre, animal, sexo, peso, fechaIngreso, idRefugio, estado]):
+            return jsonify({'success': False, 'message': 'Faltan campos requeridos'}), 400
+
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        # Verificar si el refugio existe
+        cursor.execute('SELECT idRefugio FROM refugios WHERE idRefugio = %s', (idRefugio,))
+        if not cursor.fetchone():
+            cursor.close()
+            db.close()
+            return jsonify({'success': False, 'message': 'Refugio no encontrado'}), 404
+
+        # Actualizar la mascota
+        cursor.execute("""
+            UPDATE mascotas 
+            SET nombre=%s, animal=%s, sexo=%s, raza=%s, peso=%s, 
+                condiciones=%s, edad=%s, fechaIngreso=%s, idRefugio=%s, estado=%s
+            WHERE idMascota=%s
+        """, (nombre, animal, sexo, raza or None, peso, condiciones or None, 
+              edad or None, fechaIngreso, idRefugio, estado, idMascota))
+        
+        db.commit()
+        affected = cursor.rowcount
+        cursor.close()
+        db.close()
+
+        if affected > 0:
+            return jsonify({'success': True, 'message': 'Mascota actualizada ✏️'})
+        else:
+            return jsonify({'success': False, 'message': 'Mascota no encontrada'}), 404
+
+    except Error as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# API: eliminar mascota
+@app.route('/api/mascotas/<int:idMascota>', methods=['DELETE'])
+def api_delete_mascota(idMascota):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        # Verificar dependencias en apoyos y adopciones
+        cursor.execute("SELECT COUNT(*) FROM apoyos WHERE idMascota = %s", (idMascota,))
+        apoyos_count = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM adopciones WHERE idMascota = %s", (idMascota,))
+        adopciones_count = cursor.fetchone()[0]
+        
+        if apoyos_count > 0 or adopciones_count > 0:
+            cursor.close()
+            db.close()
+            return jsonify({
+                'success': False,
+                'code': 'fk_dependency',
+                'message': 'No se puede eliminar la mascota debido a registros relacionados.',
+                'dependentCounts': {'apoyos': apoyos_count, 'adopciones': adopciones_count}
+            }), 409
+
+        # Eliminar la mascota
+        cursor.execute("DELETE FROM mascotas WHERE idMascota = %s", (idMascota,))
+        db.commit()
+        affected = cursor.rowcount
+        cursor.close()
+        db.close()
+        
+        if affected > 0:
+            return jsonify({'success': True, 'message': 'Mascota eliminada 🗑️'})
+        else:
+            return jsonify({'success': False, 'message': 'Mascota no encontrada'}), 404
+            
+    except Error as e:
+        cursor.close()
+        db.close()
+        return jsonify({'success': False, 'message': str(e)}), 500
+    except Exception as e:
+        cursor.close()
+        db.close()
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 
 if __name__ == '__main__':

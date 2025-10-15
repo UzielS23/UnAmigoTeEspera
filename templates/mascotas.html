@@ -23,52 +23,46 @@
     </select>
     <button type="submit">Registrar Mascota</button>
   </form>
-<h2 class="subtitulo">Mascotas Registradas</h2>
+  
+  <h2 class="subtitulo">Mascotas Registradas</h2>
+  <div class="busqueda-mascotas">
+    <input type="text" id="busquedaMascotas" placeholder="🔍 Buscar mascotas por nombre, animal, raza, etc." class="input-busqueda">
+  </div>
   <div class="tarjetas-mascotas" id="tarjetasMascotas">
-    
-    <div class="tarjeta-mascota">
-      <h3>Chaparro 🐾</h3>
-      <p><strong>Animal:</strong> Perro</p>
-      <p><strong>Sexo:</strong> Macho</p>
-      <p><strong>Raza:</strong> Mestizo</p>
-      <p><strong>Peso:</strong> 10 kg</p>
-      <p><strong>Edad:</strong> 3 años</p>
-      <p><strong>Condiciones:</strong> Problema estomacal</p>
-      <p><strong>Estado:</strong> En tratamiento</p>
-    </div>
-    <div class="tarjeta-mascota">
-      <h3>Luna 🐾</h3>
-      <p><strong>Animal:</strong> Perro</p>
-      <p><strong>Sexo:</strong> Hembra</p>
-      <p><strong>Raza:</strong> Labrador</p>
-      <p><strong>Peso:</strong> 25 kg</p>
-      <p><strong>Edad:</strong> 2 años</p>
-      <p><strong>Condiciones:</strong> Saludable</p>
-      <p><strong>Estado:</strong> Disponible</p>
-    </div>
-    <div class="tarjeta-mascota">
-      <h3>Max 🐾</h3>
-      <p><strong>Animal:</strong> Perro</p>
-      <p><strong>Sexo:</strong> Macho</p>
-      <p><strong>Raza:</strong> Pastor Alemán</p>
-      <p><strong>Peso:</strong> 30 kg</p>
-      <p><strong>Edad:</strong> 5 años</p>
-      <p><strong>Condiciones:</strong> Cojea pata trasera izquierda</p>
-      <p><strong>Estado:</strong> Disponible</p>
-    </div>
-    <div class="tarjeta-mascota">
-      <h3>Mimi 🐾</h3>
-      <p><strong>Animal:</strong> Gato</p>
-      <p><strong>Sexo:</strong> Hembra</p>
-      <p><strong>Raza:</strong> Siamés</p>
-      <p><strong>Peso:</strong> 4 kg</p>
-      <p><strong>Edad:</strong> 1 año</p>
-      <p><strong>Condiciones:</strong> Saludable</p>
-      <p><strong>Estado:</strong> Disponible</p>
+    <!-- Las tarjetas de mascotas se generarán dinámicamente aquí -->
+  </div>
+
+  <!-- Modal para editar mascota -->
+  <div id="modalEditarMascota" class="modal">
+    <div class="modal-contenido">
+      <span class="cerrar-modal">&times;</span>
+      <h2>Editar Mascota</h2>
+      <form id="formularioEditarMascota" class="formulario-mascota">
+        <input type="hidden" name="id">
+        <input type="text" name="nombre" placeholder="🐕 Nombre de la mascota" required>
+        <input type="text" name="animal" placeholder="🐶 Tipo de animal (Perro, Gato...)" required>
+        <select name="sexo" required>
+          <option value="">Sexo</option>
+          <option value="Macho">Macho</option>
+          <option value="Hembra">Hembra</option>
+        </select>
+        <input type="text" name="raza" placeholder="🐩 Raza">
+        <input type="number" name="peso" step="0.1" placeholder="⚖️ Peso (kg)" required>
+        <input type="text" name="condiciones" placeholder="💊 Condiciones médicas">
+        <input type="number" name="edad" placeholder="📅 Edad (años)">
+        <input type="date" name="fechaIngreso" required>
+        <input type="number" name="idRefugio" placeholder="🏠 ID Refugio" required>
+        <select name="estado" required>
+          <option value="">Estado</option>
+          <option value="Disponible">Disponible</option>
+          <option value="Adoptado">Adoptado</option>
+          <option value="En tratamiento">En tratamiento</option>
+        </select>
+        <button type="submit">Guardar Cambios</button>
+      </form>
     </div>
   </div>
 </div>
-
 
 <style>
   .contenedor-mascotas {
@@ -137,23 +131,53 @@
 
   .mensaje-exito {
     text-align: center;
-    margin-bottom: 2rem;
-    background: #dcfce7;
-    border: 2px solid #16a34a;
-    color: #166534;
+    margin-bottom: 1rem;
     padding: 0.8rem 1rem;
     border-radius: 12px;
     font-weight: 600;
     display: none;
+    transition: all 0.3s ease;
   }
 
-  .mensaje-exito.mostrar { display: block; }
+  .mensaje-exito.mostrar {
+    display: block;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
   .subtitulo {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 1rem;
     color: #1e293b;
+  }
+
+  .busqueda-mascotas {
+    margin-bottom: 1.5rem;
+  }
+
+  .input-busqueda {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0.9rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    background-color: #f9fafb;
+    transition: all 0.3s ease;
+    display: block;
+  }
+
+  .input-busqueda:focus {
+    border-color: #2563eb;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(37,99,235,0.2);
+    outline: none;
   }
 
   .tarjetas-mascotas {
@@ -187,38 +211,92 @@
     color: #374151;
   }
 
+  .tarjeta-mascota .acciones {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .tarjeta-mascota .acciones button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .tarjeta-mascota .acciones .editar {
+    background: #2563eb;
+    color: white;
+  }
+
+  .tarjeta-mascota .acciones .editar:hover {
+    background: #1e40af;
+    transform: translateY(-2px);
+  }
+
+  .tarjeta-mascota .acciones .eliminar {
+    background: #dc2626;
+    color: white;
+  }
+
+  .tarjeta-mascota .acciones .eliminar:hover {
+    background: #b91c1c;
+    transform: translateY(-2px);
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal.mostrar {
+    display: flex;
+  }
+
+  .modal-contenido {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 2rem;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    position: relative;
+  }
+
+  .cerrar-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #374151;
+  }
+
+  .cerrar-modal:hover {
+    color: #2563eb;
+  }
+
+  .estado-disponible { color: #059669; font-weight: bold; }
+  .estado-adoptado { color: #2563eb; font-weight: bold; }
+  .estado-en-tratamiento { color: #dc2626; font-weight: bold; }
+  .mensaje-exito.success { background: #dcfce7; border-color: #16a34a; color: #166534; }
+  .mensaje-exito.error { background: #fef2f2; border-color: #dc2626; color: #dc2626; }
+  .mensaje-exito.warning { background: #fef3c7; border-color: #d97706; color: #92400e; }
+
   @media (max-width: 600px) {
     .formulario-mascota { grid-template-columns: 1fr; }
+    .input-busqueda { max-width: 100%; }
+    .modal-contenido { width: 95%; }
   }
 </style>
-
-<script>
-const formularioMascota = document.getElementById('formularioMascota');
-const mensajeExito = document.getElementById('mensajeExito');
-const tarjetasMascotas = document.getElementById('tarjetasMascotas');
-
-formularioMascota.addEventListener('submit', (evento) => {
-  evento.preventDefault();
-  const datos = Object.fromEntries(new FormData(formularioMascota).entries());
-  
-  mensajeExito.classList.add('mostrar');
-  setTimeout(() => mensajeExito.classList.remove('mostrar'), 4000);
-
-  const tarjeta = document.createElement('div');
-  tarjeta.className = 'tarjeta-mascota';
-  tarjeta.innerHTML = `
-    <h3>${datos.nombre} 🐾</h3>
-    <p><strong>Animal:</strong> ${datos.animal}</p>
-    <p><strong>Sexo:</strong> ${datos.sexo}</p>
-    <p><strong>Raza:</strong> ${datos.raza || 'N/A'}</p>
-    <p><strong>Peso:</strong> ${datos.peso} kg</p>
-    <p><strong>Edad:</strong> ${datos.edad || 'N/A'} años</p>
-    <p><strong>Condiciones:</strong> ${datos.condiciones || 'Ninguna'}</p>
-    <p><strong>Estado:</strong> ${datos.estado}</p>
-  `;
-  tarjetasMascotas.prepend(tarjeta);
-
-
-  formularioMascota.reset();
-});
-</script>

@@ -770,26 +770,17 @@ document.querySelectorAll('.sidebar-link').forEach(link => {
                 .then(res => res.text())
                 .then(html => {
                     document.getElementById("content-area").innerHTML = html;
-
-                    // Ejecutar scripts de apoyos.html después de inyectarlo
                     initApoyosScripts();
                 })
                 .catch(err => console.error('Error cargando Apoyos:', err));
         } else if(section === 'refugios'){
-            // Cargar la página parcial de refugios y asegurar inicialización del módulo
             fetch('/refugios')
                 .then(res => res.text())
                 .then(html => {
                     const content = document.getElementById("content-area");
                     content.innerHTML = html;
-
-                    // Eliminar cualquier <script src="/static/js/refugios.js"> que haya sido inyectado vía innerHTML
-                    // Los scripts añadidos por innerHTML no se ejecutan, y pueden hacer que la comprobación posterior falle.
                     content.querySelectorAll('script[src="/static/js/refugios.js"]').forEach(s => s.remove());
-
-                    // Si initRefugios no está disponible, cargar el script y ejecutarlo al terminar.
                     if(typeof window.initRefugios !== 'function'){
-                        // Evitar duplicar cargas: marcar el script con id
                         if(!document.querySelector('script#refugios-js')){
                             const s = document.createElement('script');
                             s.id = 'refugios-js';
@@ -798,7 +789,6 @@ document.querySelectorAll('.sidebar-link').forEach(link => {
                             s.onload = () => { if(window.initRefugios) window.initRefugios(); }
                             document.body.appendChild(s);
                         } else {
-                            // Si existe el tag pero no se ejecutó, forzar otra carga para asegurar ejecución
                             const s = document.createElement('script');
                             s.src = '/static/js/refugios.js';
                             s.defer = true;
@@ -806,11 +796,18 @@ document.querySelectorAll('.sidebar-link').forEach(link => {
                             document.body.appendChild(s);
                         }
                     } else {
-                        // Ya está cargado y ejecutable
                         window.initRefugios();
                     }
                 })
                 .catch(err => console.error('Error cargando Refugios:', err));
+        } else if(section === 'mascotas'){
+            fetch('/mascotas')
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById("content-area").innerHTML = html;
+                    initMascotasScripts();
+                })
+                .catch(err => console.error('Error cargando Mascotas:', err));
         } else {
             loadContent(section);
         }
@@ -822,8 +819,299 @@ document.querySelectorAll('.sidebar-link').forEach(link => {
     });
 });
 
+// Función para inicializar scripts de Mascotas
+function initMascotasScripts() {
+    const formularioMascota = document.getElementById('formularioMascota');
+    const tarjetasMascotas = document.getElementById('tarjetasMascotas');
+    const busquedaMascotas = document.getElementById('busquedaMascotas');
+    const modalEditarMascota = document.getElementById('modalEditarMascota');
+    const formularioEditarMascota = document.getElementById('formularioEditarMascota');
+    const cerrarModal = modalEditarMascota?.querySelector('.cerrar-modal');
+    if (!formularioMascota || !tarjetasMascotas || !busquedaMascotas || !modalEditarMascota || !formularioEditarMascota) return;
 
-// Función que se llama después de cargar dinámicamente el módulo de Apoyos
+    let todasLasMascotas = [];
+
+    async function cargarMascotas() {
+        try {
+            const response = await fetch('/api/mascotas');
+            console.log('Respuesta de la API:', response);
+            if (response.ok) {
+                todasLasMascotas = await response.json();
+                console.log('Mascotas recibidas:', todasLasMascotas);
+                // Almacenar en localStorage para usar como respaldo
+                localStorage.setItem('mascotasCache', JSON.stringify(todasLasMascotas));
+                mostrarMascotas(todasLasMascotas);
+            } else {
+                console.error('Error al cargar mascotas:', response.status);
+                const data = await response.json();
+                if (data.error === 'offline') {
+                    // Intentar usar datos de localStorage
+                    const cachedMascotas = JSON.parse(localStorage.getItem('mascotasCache') || '[]');
+                    if (cachedMascotas.length > 0) {
+                        todasLasMascotas = cachedMascotas;
+                        mostrarMascotas(todasLasMascotas);
+                        mostrarMensaje('Mostrando datos de mascotas almacenados (sin conexión)', 'warning');
+                    } else {
+                        todasLasMascotas = [];
+                        mostrarMascotas(todasLasMascotas);
+                        mostrarMensaje('No hay datos de mascotas disponibles sin conexión', 'error');
+                    }
+                } else {
+                    mostrarMensaje(`Error al cargar mascotas: ${data.message || response.status}`, 'error');
+                }
+            }
+        } catch (error) {
+            console.error('Error de conexión:', error);
+            // Intentar usar datos de localStorage
+            const cachedMascotas = JSON.parse(localStorage.getItem('mascotasCache') || '[]');
+            if (cachedMascotas.length > 0) {
+                todasLasMascotas = cachedMascotas;
+                mostrarMascotas(todasLasMascotas);
+                mostrarMensaje('Mostrando datos de mascotas almacenados (sin conexión)', 'warning');
+            } else {
+                todasLasMascotas = [];
+                mostrarMascotas(todasLasMascotas);
+                mostrarMensaje('No hay datos de mascotas disponibles sin conexión', 'error');
+            }
+        }
+    }
+
+    function mostrarMascotas(mascotas) {
+        tarjetasMascotas.innerHTML = '';
+        if (mascotas.length === 0) {
+            tarjetasMascotas.innerHTML = '<p>No hay mascotas registradas.</p>';
+            return;
+        }
+        mascotas.forEach(mascota => {
+            const tarjeta = document.createElement('div');
+            tarjeta.className = 'tarjeta-mascota';
+            tarjeta.dataset.id = mascota.id;
+            tarjeta.innerHTML = `
+                <h3>${mascota.nombre} 🐾</h3>
+                <p><strong>Animal:</strong> ${mascota.animal}</p>
+                <p><strong>Sexo:</strong> ${mascota.sexo}</p>
+                <p><strong>Raza:</strong> ${mascota.raza || 'N/A'}</p>
+                <p><strong>Peso:</strong> ${mascota.peso} kg</p>
+                <p><strong>Edad:</strong> ${mascota.edad || 'N/A'} años</p>
+                <p><strong>Condiciones:</strong> ${mascota.condiciones || 'Ninguna'}</p>
+                <p><strong>Refugio:</strong> ${mascota.nombreRefugio || 'N/A'}</p>
+                <p><strong>Estado:</strong> <span class="estado-${mascota.estado.toLowerCase().replace(' ', '-')}">${mascota.estado}</span></p>
+                <p><strong>Fecha Ingreso:</strong> ${new Date(mascota.fechaIngreso).toLocaleDateString('es-ES')}</p>
+                <div class="acciones">
+                    <button class="editar">Editar</button>
+                    <button class="eliminar">Eliminar</button>
+                </div>
+            `;
+            tarjetasMascotas.appendChild(tarjeta);
+        });
+
+        // Agregar eventos a los botones de editar y eliminar
+        document.querySelectorAll('.tarjeta-mascota .editar').forEach(boton => {
+            boton.addEventListener('click', () => {
+                const id = boton.closest('.tarjeta-mascota').dataset.id;
+                const mascota = todasLasMascotas.find(m => m.id == id);
+                abrirModalEditar(mascota);
+            });
+        });
+
+        document.querySelectorAll('.tarjeta-mascota .eliminar').forEach(boton => {
+            boton.addEventListener('click', () => {
+                const id = boton.closest('.tarjeta-mascota').dataset.id;
+                if (confirm(`¿Estás seguro de que quieres eliminar a ${todasLasMascotas.find(m => m.id == id).nombre}?`)) {
+                    eliminarMascota(id);
+                }
+            });
+        });
+    }
+
+    async function registrarMascota(datos) {
+        try {
+            const response = await fetch('/api/mascotas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+
+            const resultado = await response.json();
+            console.log('Resultado de registro:', resultado);
+
+            if (resultado.success) {
+                mostrarMensaje('¡Mascota registrada con éxito! ✅', 'success');
+                formularioMascota.reset();
+                busquedaMascotas.value = '';
+                await cargarMascotas();
+                return true;
+            } else {
+                mostrarMensaje(resultado.message || 'Error al registrar mascota', 'error');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error de conexión al registrar:', error);
+            mostrarMensaje('No se puede registrar mascota sin conexión', 'error');
+            return false;
+        }
+    }
+
+    async function actualizarMascota(id, datos) {
+        try {
+            const response = await fetch(`/api/mascotas/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+
+            const resultado = await response.json();
+            console.log('Resultado de actualización:', resultado);
+
+            if (resultado.success) {
+                mostrarMensaje('¡Mascota actualizada con éxito! ✅', 'success');
+                modalEditarMascota.classList.remove('mostrar');
+                busquedaMascotas.value = '';
+                await cargarMascotas();
+                return true;
+            } else {
+                mostrarMensaje(resultado.message || 'Error al actualizar mascota', 'error');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error de conexión al actualizar:', error);
+            mostrarMensaje('No se puede actualizar mascota sin conexión', 'error');
+            return false;
+        }
+    }
+
+    async function eliminarMascota(id) {
+        try {
+            const response = await fetch(`/api/mascotas/${id}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const resultado = await response.json();
+            console.log('Resultado de eliminación:', resultado);
+
+            if (resultado.success) {
+                mostrarMensaje('¡Mascota eliminada con éxito! 🗑️', 'success');
+                busquedaMascotas.value = '';
+                await cargarMascotas();
+                return true;
+            } else {
+                mostrarMensaje(resultado.message || 'Error al eliminar mascota', 'error');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error de conexión al eliminar:', error);
+            mostrarMensaje('No se puede eliminar mascota sin conexión', 'error');
+            return false;
+        }
+    }
+
+    function mostrarMensaje(mensaje, tipo) {
+        let mensajeDiv = document.querySelector('.mensaje-exito');
+        if (!mensajeDiv) {
+            mensajeDiv = document.createElement('div');
+            mensajeDiv.className = 'mensaje-exito';
+            formularioMascota.parentNode.insertBefore(mensajeDiv, formularioMascota);
+        }
+
+        mensajeDiv.textContent = mensaje;
+        mensajeDiv.className = `mensaje-exito mostrar ${tipo}`;
+
+        setTimeout(() => {
+            mensajeDiv.classList.remove('mostrar');
+        }, 4000);
+    }
+
+    function filtrarMascotas(textoBusqueda) {
+        const texto = textoBusqueda.toLowerCase().trim();
+        const mascotasFiltradas = todasLasMascotas.filter(mascota =>
+            (mascota.nombre && mascota.nombre.toLowerCase().includes(texto)) ||
+            (mascota.animal && mascota.animal.toLowerCase().includes(texto)) ||
+            (mascota.raza && mascota.raza.toLowerCase().includes(texto)) ||
+            (mascota.condiciones && mascota.condiciones.toLowerCase().includes(texto)) ||
+            (mascota.estado && mascota.estado.toLowerCase().includes(texto)) ||
+            (mascota.nombreRefugio && mascota.nombreRefugio.toLowerCase().includes(texto))
+        );
+        mostrarMascotas(mascotasFiltradas);
+    }
+
+    function abrirModalEditar(mascota) {
+        formularioEditarMascota.querySelector('[name="id"]').value = mascota.id;
+        formularioEditarMascota.querySelector('[name="nombre"]').value = mascota.nombre;
+        formularioEditarMascota.querySelector('[name="animal"]').value = mascota.animal;
+        formularioEditarMascota.querySelector('[name="sexo"]').value = mascota.sexo;
+        formularioEditarMascota.querySelector('[name="raza"]').value = mascota.raza || '';
+        formularioEditarMascota.querySelector('[name="peso"]').value = mascota.peso;
+        formularioEditarMascota.querySelector('[name="condiciones"]').value = mascota.condiciones || '';
+        formularioEditarMascota.querySelector('[name="edad"]').value = mascota.edad || '';
+        formularioEditarMascota.querySelector('[name="fechaIngreso"]').value = mascota.fechaIngreso.split('T')[0];
+        formularioEditarMascota.querySelector('[name="idRefugio"]').value = mascota.idRefugio;
+        formularioEditarMascota.querySelector('[name="estado"]').value = mascota.estado;
+        modalEditarMascota.classList.add('mostrar');
+    }
+
+    // Eventos
+    busquedaMascotas.addEventListener('input', (evento) => {
+        filtrarMascotas(evento.target.value);
+    });
+
+    formularioMascota.addEventListener('submit', async (evento) => {
+        evento.preventDefault();
+        const datos = Object.fromEntries(new FormData(formularioMascota).entries());
+
+        if (!datos.nombre || !datos.animal || !datos.sexo || !datos.peso || !datos.fechaIngreso || !datos.idRefugio || !datos.estado) {
+            mostrarMensaje('Por favor completa todos los campos requeridos', 'error');
+            return;
+        }
+
+        datos.peso = parseFloat(datos.peso);
+        datos.edad = datos.edad ? parseInt(datos.edad) : null;
+        datos.raza = datos.raza || null;
+        datos.condiciones = datos.condiciones || null;
+
+        await registrarMascota(datos);
+    });
+
+    formularioEditarMascota.addEventListener('submit', async (evento) => {
+        evento.preventDefault();
+        const datos = Object.fromEntries(new FormData(formularioEditarMascota).entries());
+
+        if (!datos.nombre || !datos.animal || !datos.sexo || !datos.peso || !datos.fechaIngreso || !datos.idRefugio || !datos.estado) {
+            mostrarMensaje('Por favor completa todos los campos requeridos', 'error');
+            return;
+        }
+
+        datos.peso = parseFloat(datos.peso);
+        datos.edad = datos.edad ? parseInt(datos.edad) : null;
+        datos.raza = datos.raza || null;
+        datos.condiciones = datos.condiciones || null;
+        datos.id = parseInt(datos.id);
+
+        await actualizarMascota(datos.id, datos);
+    });
+
+    cerrarModal.addEventListener('click', () => {
+        modalEditarMascota.classList.remove('mostrar');
+    });
+
+    modalEditarMascota.addEventListener('click', (evento) => {
+        if (evento.target === modalEditarMascota) {
+            modalEditarMascota.classList.remove('mostrar');
+        }
+    });
+
+    // Escuchar mensajes del Service Worker para actualizar datos
+    navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data && event.data.type === 'RESOURCE_UPDATED' && event.data.url.includes('/api/mascotas')) {
+            console.log('Recurso actualizado, recargando mascotas:', event.data.url);
+            cargarMascotas();
+        }
+    });
+
+    cargarMascotas();
+}
+    
+// Función que se llama después de ca}rgar dinámicamente el módulo de Apoyos
 function initApoyosScripts() {
     const form = document.getElementById('apoyoForm');
     if(!form) return; // Por seguridad, si no existe el form, salir
@@ -1094,13 +1382,12 @@ function cargarGraficaTiempo() {
     </script>
 </body>
 </html>
+</html>
 <script>
 if (navigator.serviceWorker) {
     navigator.serviceWorker.addEventListener('message', event => {
         if (event.data && event.data.type === 'RESOURCE_UPDATED') {
             console.log('Recurso actualizado desde SW:', event.data.url);
-
-           
         }
     });
 }

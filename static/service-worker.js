@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unamigoteeespera-cache-v16';
+const CACHE_NAME = 'unamigoteeespera-cache-v21';
 const urlsToCache = [
     '/',
     '/offline',
@@ -8,6 +8,10 @@ const urlsToCache = [
     '/refugios',
     '/partials/refugios',
     '/partials/apoyos',
+    '/partials/mascotas',
+    '/mascotas',
+    '/api/mascotas',
+    '/api/refugios',
     '/notificaciones',
     '/static/img/logo.png',
     '/static/img/descarga%20(17).jpg',
@@ -20,6 +24,7 @@ const urlsToCache = [
     '/static/img/icon-512.png',
     '/static/js/refugios.js'
 ];
+
 
 
 // INSTALL
