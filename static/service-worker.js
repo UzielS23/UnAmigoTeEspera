@@ -1,10 +1,12 @@
-const CACHE_NAME = 'unamigoteeespera-cache-v15';
+const CACHE_NAME = 'unamigoteeespera-cache-v16';
 const urlsToCache = [
     '/',
     '/offline',
     '/login',
     '/dashboard-graficas',
     '/apoyos',
+    '/refugios',
+    '/partials/refugios',
     '/partials/apoyos',
     '/notificaciones',
     '/static/img/logo.png',
@@ -15,8 +17,10 @@ const urlsToCache = [
     '/static/img/mimi.jpg',
     '/manifest.json',
     '/static/img/icon-192.png',
-    '/static/img/icon-512.png'
+    '/static/img/icon-512.png',
+    '/static/js/refugios.js'
 ];
+
 
 // INSTALL
 self.addEventListener('install', event => {
@@ -42,6 +46,7 @@ self.addEventListener('fetch', event => {
         const cache = await caches.open(CACHE_NAME);
         const cachedResponse = await cache.match(event.request, { ignoreSearch: true });
 
+        // Si hay respuesta en cache, devuélvela inmediatamente
         if (cachedResponse) return cachedResponse;
 
         try {
@@ -51,6 +56,13 @@ self.addEventListener('fetch', event => {
                 : event.request;
 
             const networkResponse = await fetch(fetchRequest);
+
+            // Si la petición es a la API de refugios, almacenarla en cache para uso offline
+            if (networkResponse && networkResponse.status === 200 && event.request.url.includes('/api/refugios')) {
+                try{
+                    await cache.put(event.request, networkResponse.clone());
+                }catch(e){ console.warn('[SW] No se pudo cachear respuesta /api/refugios', e) }
+            }
 
             if (networkResponse && networkResponse.status === 200 && !isGraph) {
                 await cache.put(event.request, networkResponse.clone());

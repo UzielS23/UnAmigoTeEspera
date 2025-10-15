@@ -358,6 +358,171 @@ def mascotas():
 def refugios():
     return render_template("refugios.html")
 
+
+### API REST para Refugios
+@app.route('/api/refugios', methods=['GET'])
+def api_list_refugios():
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM refugios ORDER BY idRefugio DESC")
+        refugios = cursor.fetchall()
+        cursor.close()
+        db.close()
+        return jsonify(refugios)
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/refugios/<int:id>', methods=['GET'])
+def api_get_refugio(id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute('SELECT * FROM refugios WHERE idRefugio = %s', (id,))
+        r = cursor.fetchone()
+        cursor.close()
+        db.close()
+        if not r:
+            return jsonify({'success': False, 'message': 'Refugio no encontrado'}), 404
+        return jsonify(r)
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/refugios', methods=['POST'])
+def api_create_refugio():
+    try:
+        data = request.get_json() or {}
+        nombre = data.get('nombre')
+        direccion = data.get('direccion')
+        telefono = data.get('telefono')
+        correo = data.get('correoElectronico')
+        capacidad = data.get('capacidad')
+        fecha = data.get('fechaFundacion')
+        descripcion = data.get('descripcion')
+
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("""
+            INSERT INTO refugios (nombre, direccion, telefono, correoElectronico, capacidad, fechaFundacion, descripcion)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (nombre, direccion, telefono, correo, capacidad, fecha, descripcion))
+        db.commit()
+        new_id = cursor.lastrowid
+        cursor.close()
+        db.close()
+        return jsonify({'success': True, 'message': 'Refugio creado', 'idRefugio': new_id})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/refugios/<int:id>', methods=['PUT'])
+def api_update_refugio(id):
+    try:
+        data = request.get_json() or {}
+        nombre = data.get('nombre')
+        direccion = data.get('direccion')
+        telefono = data.get('telefono')
+        correo = data.get('correoElectronico')
+        capacidad = data.get('capacidad')
+        fecha = data.get('fechaFundacion')
+        descripcion = data.get('descripcion')
+
+        db = get_db_connection()
+        cursor = db.cursor()
+        cursor.execute("""
+            UPDATE refugios SET nombre=%s, direccion=%s, telefono=%s, correoElectronico=%s, capacidad=%s, fechaFundacion=%s, descripcion=%s
+            WHERE idRefugio=%s
+        """, (nombre, direccion, telefono, correo, capacidad, fecha, descripcion, id))
+        db.commit()
+        cursor.close()
+        db.close()
+        return jsonify({'success': True, 'message': 'Refugio actualizado'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/refugios/<int:id>', methods=['DELETE'])
+def api_delete_refugio(id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+        # intentar eliminar
+        try:
+            cursor.execute('DELETE FROM refugios WHERE idRefugio = %s', (id,))
+            db.commit()
+            affected = cursor.rowcount
+            cursor.close()
+            db.close()
+            if affected == 0:
+                return jsonify({'success': False, 'message': 'Refugio no encontrado'}), 404
+            return jsonify({'success': True, 'message': 'Refugio eliminado'})
+        except mysql.connector.Error as err:
+            # código 1451: constraint fails (foreign key)
+            if getattr(err, 'errno', None) == 1451:
+                # contar dependencias para informar al cliente
+                cursor_dep = db.cursor()
+                cursor_dep.execute('SELECT COUNT(*) FROM apoyos WHERE idRefugio = %s', (id,))
+                apoyos_count = cursor_dep.fetchone()[0]
+                cursor_dep.execute('SELECT COUNT(*) FROM mascotas WHERE idRefugio = %s', (id,))
+                mascotas_count = cursor_dep.fetchone()[0]
+                cursor_dep.close()
+                db.close()
+                return jsonify({'success': False, 'message': 'Existen dependencias relacionadas', 'code': 'fk_dependency', 'dependentCounts': {'apoyos': apoyos_count, 'mascotas': mascotas_count}}), 409
+            else:
+                cursor.close()
+                db.close()
+                return jsonify({'success': False, 'message': str(err)}), 500
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/refugios/<int:id>/force_delete', methods=['POST'])
+def api_force_delete_refugio(id):
+    try:
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        # Contar dependencias para el mensaje de retorno
+        cursor.execute('SELECT COUNT(*) FROM apoyos WHERE idRefugio = %s', (id,))
+        apoyos_count = cursor.fetchone()[0]
+        cursor.execute('SELECT idMascota FROM mascotas WHERE idRefugio = %s', (id,))
+        mascotas_rows = cursor.fetchall()
+        mascotas_ids = [r[0] for r in mascotas_rows]
+        mascotas_count = len(mascotas_ids)
+
+        # Empezar transacción manual
+        try:
+            # Eliminar apoyos directamente ligados al refugio
+            cursor.execute('DELETE FROM apoyos WHERE idRefugio = %s', (id,))
+
+            # Si existen mascotas del refugio, eliminar apoyos relacionados con esas mascotas y luego las mascotas
+            if mascotas_ids:
+                format_ids = ','.join(['%s'] * len(mascotas_ids))
+                # eliminar apoyos que referencien a esas mascotas
+                cursor.execute(f"DELETE FROM apoyos WHERE idMascota IN ({format_ids})", tuple(mascotas_ids))
+                # eliminar adopciones relacionadas con esas mascotas
+                cursor.execute(f"DELETE FROM adopciones WHERE idMascota IN ({format_ids})", tuple(mascotas_ids))
+                # eliminar mascotas
+                cursor.execute(f"DELETE FROM mascotas WHERE idRefugio = %s", (id,))
+
+            # Finalmente eliminar el refugio
+            cursor.execute('DELETE FROM refugios WHERE idRefugio = %s', (id,))
+            db.commit()
+            cursor.close()
+            db.close()
+            return jsonify({'success': True, 'message': 'Refugio y dependencias eliminadas', 'dependentCounts': {'apoyos': apoyos_count, 'mascotas': mascotas_count}})
+        except Exception as e:
+            db.rollback()
+            cursor.close()
+            db.close()
+            return jsonify({'success': False, 'message': f'Error al eliminar en cascada: {str(e)}'}), 500
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 @app.route("/notificaciones")
 def notificaciones():
     try:
